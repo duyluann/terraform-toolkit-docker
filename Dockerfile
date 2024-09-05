@@ -32,13 +32,13 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Install Terraform
 RUN curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
     && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-    && chmod +x terraform \
+    && chmod u+x terraform \
     && mv terraform /usr/local/bin/ \
     && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
 # Install Terragrunt
 RUN curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 \
-    && chmod +x terragrunt_linux_amd64 \
+    && chmod u+x terragrunt_linux_amd64 \
     && mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 
 # Install Checkov using pip in the virtual environment
@@ -47,20 +47,20 @@ RUN pip install --no-cache-dir checkov==${CHECKOV_VERSION}
 # Install Terraform Docs
 RUN curl -LO https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz \
     && tar -xvzf terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz \
-    && chmod +x terraform-docs \
+    && chmod u+x terraform-docs \
     && mv terraform-docs /usr/local/bin/ \
     && rm terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz
 
 # Install TFLint
 RUN curl -LO https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_amd64.zip \
     && unzip tflint_linux_amd64.zip \
-    && chmod +x tflint \
+    && chmod u+x tflint \
     && mv tflint /usr/local/bin/ \
     && rm tflint_linux_amd64.zip
 
 # Install TFsec
 RUN curl -LO https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 \
-    && chmod +x tfsec-linux-amd64 \
+    && chmod u+x tfsec-linux-amd64 \
     && mv tfsec-linux-amd64 /usr/local/bin/tfsec
 
 # Verify installations
