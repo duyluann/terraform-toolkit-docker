@@ -78,7 +78,9 @@ jobs:
           fi
 
           # Properly export the multi-line PR body using <<EOF syntax
+          echo "PR_BODY<<EOF" >> $GITHUB_ENV
           echo "$PR_BODY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Check for changes
         id: check_changes
