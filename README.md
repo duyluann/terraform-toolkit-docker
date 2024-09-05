@@ -59,8 +59,8 @@ This repository includes several GitHub Actions workflows to automate testing, d
 
 ### 🗂️ Project Structure
 ```bash
-├── .editorconfig                # Editor configuration for consistent coding styles
-├── .github/                     # GitHub workflows for CI/CD automation
+├── .editorconfig                 # Editor configuration for consistent coding styles
+├── .github/                      # GitHub workflows for CI/CD automation
 │   ├── ISSUE_TEMPLATE/           # Templates for GitHub issues
 │   ├── workflows/                # CI/CD pipelines (build, release, etc.)
 │   ├── dependabot.yml            # Automatic dependency updates
