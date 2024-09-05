@@ -43,15 +43,6 @@ jobs:
           sed -i "s/^ARG TFLINT_VERSION=.*/ARG TFLINT_VERSION=${TFLINT_VERSION}/" Dockerfile
           sed -i "s/^ARG TFSEC_VERSION=.*/ARG TFSEC_VERSION=${TFSEC_VERSION}/" Dockerfile
 
-      # # Create a new branch for the updates
-      # - name: Create Branch for Updates
-      #   run: |
-      #     BRANCH_NAME="update-tool-versions-${{ github.run_id }}"
-      #     git checkout -b $BRANCH_NAME
-      #     git add Dockerfile
-      #     git commit -m "Update tool versions: Terraform ${TERRAFORM_VERSION}, Terragrunt ${TERRAGRUNT_VERSION}, Checkov ${CHECKOV_VERSION}, TF Docs ${TFDOCS_VERSION}, TFLint ${TFLINT_VERSION}, TFsec ${TFSEC_VERSION}" || echo "No changes to commit"
-      #     git push --set-upstream origin $BRANCH_NAME
-
       - name: Check for changes
         id: check_changes
         run: |
