@@ -56,7 +56,7 @@ RUN curl -LO https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VE
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
-    /opt/venv/bin/checkov --version && \
+    checkov --version && \
     terraform-docs --version && \
     tflint --version && \
     tfsec --version
