@@ -18,6 +18,9 @@ Make sure you have Docker installed on your system before using this image.
 
 #### Install Docker
 📥 Pulling the Docker Image
+
+The image repository: [terraform-toolkit](https://hub.docker.com/repository/docker/duyl97/terraform-toolkit/general).
+
 To pull the pre-built Docker image from Docker Hub:
 
 ```bash
