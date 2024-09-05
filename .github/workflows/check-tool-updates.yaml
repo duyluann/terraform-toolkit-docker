@@ -28,12 +28,12 @@ jobs:
       - name: Update Terraform Tools Versions
         run: |
           # Fetch the latest versions using curl and jq
-          TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name)
-          TERRAGRUNT_VERSION=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .tag_name)
-          CHECKOV_VERSION=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .tag_name)
-          TFDOCS_VERSION=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .tag_name)
-          TFLINT_VERSION=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .tag_name)
-          TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name)
+          TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name | sed 's/^v//')
+          TERRAGRUNT_VERSION=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .tag_name | sed 's/^v//')
+          CHECKOV_VERSION=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .tag_name | sed 's/^v//')
+          TFDOCS_VERSION=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .tag_name | sed 's/^v//')
+          TFLINT_VERSION=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .tag_name | sed 's/^v//')
+          TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name | sed 's/^v//')
 
           # Update the Dockerfile with the latest versions
           sed -i "s/^ARG TERRAFORM_VERSION=.*/ARG TERRAFORM_VERSION=${TERRAFORM_VERSION}/" Dockerfile
