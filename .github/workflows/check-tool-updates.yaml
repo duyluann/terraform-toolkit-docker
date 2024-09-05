@@ -1,0 +1,47 @@
+name: Weekly Version Check
+
+# Schedule the workflow to run every Monday at 00:00 UTC
+on:
+  schedule:
+    - cron: '0 0 * * MON'
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repo
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up git identity to commit changes
+      - name: Set up Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      # Check and update tool versions
+      - name: Update Terraform Tools Versions
+        run: |
+          # Fetch the latest versions using curl and jq
+          TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name)
+          TERRAGRUNT_VERSION=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .tag_name)
+          CHECKOV_VERSION=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .tag_name)
+          TFDOCS_VERSION=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .tag_name)
+          TFLINT_VERSION=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .tag_name)
+          TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name)
+
+          # Update the Dockerfile with the latest versions
+          sed -i "s/^ARG TERRAFORM_VERSION=.*/ARG TERRAFORM_VERSION=${TERRAFORM_VERSION}/" Dockerfile
+          sed -i "s/^ARG TERRAGRUNT_VERSION=.*/ARG TERRAGRUNT_VERSION=${TERRAGRUNT_VERSION}/" Dockerfile
+          sed -i "s/^ARG CHECKOV_VERSION=.*/ARG CHECKOV_VERSION=${CHECKOV_VERSION}/" Dockerfile
+          sed -i "s/^ARG TFDOCS_VERSION=.*/ARG TFDOCS_VERSION=${TFDOCS_VERSION}/" Dockerfile
+          sed -i "s/^ARG TFLINT_VERSION=.*/ARG TFLINT_VERSION=${TFLINT_VERSION}/" Dockerfile
+          sed -i "s/^ARG TFSEC_VERSION=.*/ARG TFSEC_VERSION=${TFSEC_VERSION}/" Dockerfile
+
+      # Commit and push the changes if updates were made
+      - name: Commit and Push Changes
+        run: |
+          git add Dockerfile
+          git commit -m "Update tool versions: Terraform ${TERRAFORM_VERSION}, Terragrunt ${TERRAGRUNT_VERSION}, Checkov ${CHECKOV_VERSION}, TF Docs ${TFDOCS_VERSION}, TFLint ${TFLINT_VERSION}, TFsec ${TFSEC_VERSION}" || echo "No changes to commit"
+          git push
