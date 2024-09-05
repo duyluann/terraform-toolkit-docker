@@ -1,4 +1,4 @@
-# Use Ubuntu base image instead of Alpine for better WSL2 compatibility
+# Use Ubuntu base image for better WSL2 compatibility
 FROM ubuntu:latest
 
 # Set ARGs for tool versions
@@ -8,6 +8,8 @@ ARG CHECKOV_VERSION=3.2.245
 ARG TFDOCS_VERSION=0.18.0
 ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
+
+USER root
 
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
@@ -42,7 +44,7 @@ RUN curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/v${TER
     && mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 
 # Install Checkov using pip in the virtual environment
-RUN pip install --no-cache-dir checkov==${CHECKOV_VERSION}
+RUN /opt/venv/bin/pip install --no-cache-dir checkov==${CHECKOV_VERSION}
 
 # Install Terraform Docs
 RUN curl -LO https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz \
@@ -66,7 +68,7 @@ RUN curl -LO https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VE
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
-    checkov --version && \
+    /opt/venv/bin/checkov --version && \
     terraform-docs --version && \
     tflint --version && \
     tfsec --version
