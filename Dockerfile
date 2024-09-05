@@ -1,13 +1,13 @@
 # Use an official Alpine base image for a minimal footprint
-FROM alpine:3.18
+FROM alpine:latest
 
 # Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.5.0
-ARG TERRAGRUNT_VERSION=v0.67.2
+ARG TERRAGRUNT_VERSION=0.67.2
 ARG CHECKOV_VERSION=3.2.245
-ARG TFDOCS_VERSION=v0.18.0
-ARG TFLINT_VERSION=v0.53.0
-ARG TFSEC_VERSION=v1.28.10
+ARG TFDOCS_VERSION=0.18.0
+ARG TFLINT_VERSION=0.53.0
+ARG TFSEC_VERSION=1.28.10
 
 # Install necessary dependencies
 RUN apk --no-cache add \
