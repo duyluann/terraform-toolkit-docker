@@ -1,5 +1,5 @@
-# Use an official Alpine base image for a minimal footprint
-FROM alpine:latest
+# Use Ubuntu base image instead of Alpine for better WSL2 compatibility
+FROM ubuntu:latest
 
 # Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.5.0
@@ -10,23 +10,21 @@ ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 
 # Install necessary dependencies
-RUN apk --no-cache add \
+RUN apt-get update && apt-get install -y \
     bash \
     curl \
     git \
     jq \
     unzip \
     python3 \
-    py3-pip \
-    py3-virtualenv \
-    gcc \
-    musl-dev \
+    python3-pip \
+    build-essential \
     libffi-dev \
-    openssl-dev
+    openssl
 
 # Create a Python virtual environment and upgrade pip
 RUN python3 -m venv /opt/venv \
-    && /bin/sh -c ". /opt/venv/bin/activate && pip install --upgrade pip"
+    && /opt/venv/bin/pip install --upgrade pip
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Terraform
@@ -41,7 +39,7 @@ RUN curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/v${TER
     && chmod +x terragrunt_linux_amd64 \
     && mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 
-# Install Checkov
+# Install Checkov using pip in the virtual environment
 RUN pip install --no-cache-dir checkov==${CHECKOV_VERSION}
 
 # Install Terraform Docs
