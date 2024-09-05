@@ -1,15 +1,18 @@
 # 🛠️ Terraform Toolkit Docker Image
+
+[![Build Terraform Toolkit Image](https://github.com/duyluan97/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml/badge.svg?branch=main)](https://github.com/duyluan97/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml)
+
 This repository provides a Docker image for a comprehensive Terraform toolkit. It bundles essential Terraform-related tools such as Terraform, Terragrunt, Checkov, TFSec, TFDoc, and TFLint to streamline infrastructure management, security checks, and linting.
 
 ## 🧰 Tools Included
 The Docker image includes the following tools:
 
-- 🌍 Terraform: Infrastructure as Code (IaC) tool to manage cloud and on-prem resources.
-- 🚜 Terragrunt: A thin wrapper for Terraform that provides extra tools for keeping your configurations DRY.
-- 🔍 Checkov: Static code analysis tool for infrastructure-as-code to detect cloud misconfigurations.
-- 📄 TFDoc: Generate documentation for your Terraform modules in various output formats.
-- 🔐 TFSec: A security scanner for your Terraform code.
-- 🔧 TFLint: A linter for Terraform code to detect potential errors and enforce best practices.
+- 🌍 [Terraform](https://www.terraform.io/): Infrastructure as Code (IaC) tool to manage cloud and on-prem resources.
+- 🚜 [Terragrunt](https://terragrunt.gruntwork.io/): A thin wrapper for Terraform that provides extra tools for keeping your configurations DRY.
+- 🔍 [Checkov](https://www.checkov.io/): Static code analysis tool for infrastructure-as-code to detect cloud misconfigurations.
+- 📄 [terraform-docs](https://terraform-docs.io/): Generate documentation for your Terraform modules in various output formats.
+- 🔐 [TFSec](https://github.com/aquasecurity/tfsec): A security scanner for your Terraform code.
+- 🔧 [TFLint](https://github.com/terraform-linters/tflint): A linter for Terraform code to detect potential errors and enforce best practices.
 
 ## 🚀 Getting Started
 
