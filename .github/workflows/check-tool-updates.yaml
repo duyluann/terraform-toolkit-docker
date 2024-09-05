@@ -55,5 +55,5 @@ jobs:
         with:
           commit-message: 'chore: Update tool versions'
           title: 'chore: Update tool versions'
-          branch: update-tool-versions-${{ github.run_id }}
+          branch: update-tool-versions
           body: 'Update tool versions.'
