@@ -28,54 +28,65 @@ jobs:
       - name: Update Terraform Tools Versions
         id: update_versions
         run: |
+          # Fetch the current versions from Dockerfile
+          CURRENT_TERRAFORM_VERSION=$(grep '^ARG TERRAFORM_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_TERRAGRUNT_VERSION=$(grep '^ARG TERRAGRUNT_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_CHECKOV_VERSION=$(grep '^ARG CHECKOV_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_TFDOCS_VERSION=$(grep '^ARG TFDOCS_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
+
           # Fetch the latest versions using curl and jq
-          TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name | sed 's/^v//')
-          TERRAGRUNT_VERSION=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .tag_name | sed 's/^v//')
-          CHECKOV_VERSION=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .tag_name | sed 's/^v//')
-          TFDOCS_VERSION=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .tag_name | sed 's/^v//')
-          TFLINT_VERSION=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .tag_name | sed 's/^v//')
-          TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name | sed 's/^v//')
+          LATEST_TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name | sed 's/^v//')
+          LATEST_TERRAGRUNT_VERSION=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .tag_name | sed 's/^v//')
+          LATEST_CHECKOV_VERSION=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .tag_name | sed 's/^v//')
+          LATEST_TFDOCS_VERSION=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .tag_name | sed 's/^v//')
+          LATEST_TFLINT_VERSION=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .tag_name | sed 's/^v//')
+          LATEST_TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name | sed 's/^v//')
 
-          # Fetch changelogs for the latest releases
-          TERRAFORM_CHANGELOG=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .body)
-          TERRAGRUNT_CHANGELOG=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .body)
-          CHECKOV_CHANGELOG=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .body)
-          TFDOCS_CHANGELOG=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .body)
-          TFLINT_CHANGELOG=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .body)
-          TFSEC_CHANGELOG=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .body)
+          # Initialize PR body and check if each tool has a version change
+          PR_BODY="Updated tool versions:\n\n"
 
-          # Store changelogs as output
-          echo "TERRAFORM_CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$TERRAFORM_CHANGELOG" >> $GITHUB_ENV
+          if [ "$CURRENT_TERRAFORM_VERSION" != "$LATEST_TERRAFORM_VERSION" ]; then
+            TERRAFORM_CHANGELOG=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .body)
+            sed -i "s/^ARG TERRAFORM_VERSION=.*/ARG TERRAFORM_VERSION=${LATEST_TERRAFORM_VERSION}/" Dockerfile
+            PR_BODY+="\n- **Terraform**: $LATEST_TERRAFORM_VERSION\n  Changelog:\n  ```markdown\n  $TERRAFORM_CHANGELOG\n  ```\n"
+          fi
+
+          if [ "$CURRENT_TERRAGRUNT_VERSION" != "$LATEST_TERRAGRUNT_VERSION" ]; then
+            TERRAGRUNT_CHANGELOG=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .body)
+            sed -i "s/^ARG TERRAGRUNT_VERSION=.*/ARG TERRAGRUNT_VERSION=${LATEST_TERRAGRUNT_VERSION}/" Dockerfile
+            PR_BODY+="\n- **Terragrunt**: $LATEST_TERRAGRUNT_VERSION\n  Changelog:\n  ```markdown\n  $TERRAGRUNT_CHANGELOG\n  ```\n"
+          fi
+
+          if [ "$CURRENT_CHECKOV_VERSION" != "$LATEST_CHECKOV_VERSION" ]; then
+            CHECKOV_CHANGELOG=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .body)
+            sed -i "s/^ARG CHECKOV_VERSION=.*/ARG CHECKOV_VERSION=${LATEST_CHECKOV_VERSION}/" Dockerfile
+            PR_BODY+="\n- **Checkov**: $LATEST_CHECKOV_VERSION\n  Changelog:\n  ```markdown\n  $CHECKOV_CHANGELOG\n  ```\n"
+          fi
+
+          if [ "$CURRENT_TFDOCS_VERSION" != "$LATEST_TFDOCS_VERSION" ]; then
+            TFDOCS_CHANGELOG=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .body)
+            sed -i "s/^ARG TFDOCS_VERSION=.*/ARG TFDOCS_VERSION=${LATEST_TFDOCS_VERSION}/" Dockerfile
+            PR_BODY+="\n- **Terraform Docs**: $LATEST_TFDOCS_VERSION\n  Changelog:\n  ```markdown\n  $TFDOCS_CHANGELOG\n  ```\n"
+          fi
+
+          if [ "$CURRENT_TFLINT_VERSION" != "$LATEST_TFLINT_VERSION" ]; then
+            TFLINT_CHANGELOG=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .body)
+            sed -i "s/^ARG TFLINT_VERSION=.*/ARG TFLINT_VERSION=${LATEST_TFLINT_VERSION}/" Dockerfile
+            PR_BODY+="\n- **TFLint**: $LATEST_TFLINT_VERSION\n  Changelog:\n  ```markdown\n  $TFLINT_CHANGELOG\n  ```\n"
+          fi
+
+          if [ "$CURRENT_TFSEC_VERSION" != "$LATEST_TFSEC_VERSION" ]; then
+            TFSEC_CHANGELOG=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .body)
+            sed -i "s/^ARG TFSEC_VERSION=.*/ARG TFSEC_VERSION=${LATEST_TFSEC_VERSION}/" Dockerfile
+            PR_BODY+="\n- **TFSec**: $LATEST_TFSEC_VERSION\n  Changelog:\n  ```markdown\n  $TFSEC_CHANGELOG\n  ```\n"
+          fi
+
+          # Export the PR body as an environment variable
+          echo "PR_BODY<<EOF" >> $GITHUB_ENV
+          echo "$PR_BODY" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
-          echo "TERRAGRUNT_CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$TERRAGRUNT_CHANGELOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-          echo "CHECKOV_CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$CHECKOV_CHANGELOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-          echo "TFDOCS_CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$TFDOCS_CHANGELOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-          echo "TFLINT_CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$TFLINT_CHANGELOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-          echo "TFSEC_CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$TFSEC_CHANGELOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-          # Update the Dockerfile with the latest versions
-          sed -i "s/^ARG TERRAFORM_VERSION=.*/ARG TERRAFORM_VERSION=${TERRAFORM_VERSION}/" Dockerfile
-          sed -i "s/^ARG TERRAGRUNT_VERSION=.*/ARG TERRAGRUNT_VERSION=${TERRAGRUNT_VERSION}/" Dockerfile
-          sed -i "s/^ARG CHECKOV_VERSION=.*/ARG CHECKOV_VERSION=${CHECKOV_VERSION}/" Dockerfile
-          sed -i "s/^ARG TFDOCS_VERSION=.*/ARG TFDOCS_VERSION=${TFDOCS_VERSION}/" Dockerfile
-          sed -i "s/^ARG TFLINT_VERSION=.*/ARG TFLINT_VERSION=${TFLINT_VERSION}/" Dockerfile
-          sed -i "s/^ARG TFSEC_VERSION=.*/ARG TFSEC_VERSION=${TFSEC_VERSION}/" Dockerfile
 
       - name: Check for changes
         id: check_changes
@@ -90,41 +101,4 @@ jobs:
           commit-message: 'chore: Update tool versions'
           title: 'chore: Update tool versions'
           branch: update-tool-versions
-          body: |
-            Updated tool versions:
-
-            - **Terraform**: ${{ env.TERRAFORM_VERSION }}
-              Changelog:
-              ```markdown
-              ${{ env.TERRAFORM_CHANGELOG }}
-              ```
-
-            - **Terragrunt**: ${{ env.TERRAGRUNT_VERSION }}
-              Changelog:
-              ```markdown
-              ${{ env.TERRAGRUNT_CHANGELOG }}
-              ```
-
-            - **Checkov**: ${{ env.CHECKOV_VERSION }}
-              Changelog:
-              ```markdown
-              ${{ env.CHECKOV_CHANGELOG }}
-              ```
-
-            - **Terraform Docs**: ${{ env.TFDOCS_VERSION }}
-              Changelog:
-              ```markdown
-              ${{ env.TFDOCS_CHANGELOG }}
-              ```
-
-            - **TFLint**: ${{ env.TFLINT_VERSION }}
-              Changelog:
-              ```markdown
-              ${{ env.TFLINT_CHANGELOG }}
-              ```
-
-            - **TFSec**: ${{ env.TFSEC_VERSION }}
-              Changelog:
-              ```markdown
-              ${{ env.TFSEC_CHANGELOG }}
-              ```
+          body: ${{ env.PR_BODY }}
