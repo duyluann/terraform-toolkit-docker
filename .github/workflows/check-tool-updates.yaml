@@ -65,6 +65,6 @@ jobs:
             - TF Docs: ${{ env.TFDOCS_VERSION }}
             - TFLint: ${{ env.TFLINT_VERSION }}
             - TFsec: ${{ env.TFSEC_VERSION }}
-          head: $BRANCH_NAME
+          branch: $BRANCH_NAME
           base: main
           token: ${{ secrets.GITHUB_TOKEN }}
