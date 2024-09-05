@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM public.ecr.aws/ubuntu/ubuntu:22.04
 
 # Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.9.5
