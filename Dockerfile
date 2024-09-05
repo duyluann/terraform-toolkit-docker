@@ -1,4 +1,3 @@
-# Use Ubuntu base image for better WSL2 compatibility
 FROM ubuntu:latest
 
 # Set ARGs for tool versions
@@ -12,39 +11,28 @@ ARG TFSEC_VERSION=1.28.10
 USER root
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y \
-    bash \
-    curl \
-    git \
-    jq \
+RUN apt-get update -y && \
+    apt-get install -y \
     unzip \
+    wget \
+    vim \
+    git \
+    curl \
+    jq \
     python3 \
-    python3-pip \
-    python3-venv \
-    build-essential \
-    libffi-dev \
-    openssl \
-    && apt-get clean
-
-# Create a Python virtual environment and upgrade pip
-RUN python3 -m venv /opt/venv \
-    && /opt/venv/bin/pip install --upgrade pip
-ENV PATH="/opt/venv/bin:$PATH"
+    python3-pip && \
+    python3 -m pip install --upgrade pip
 
 # Install Terraform
-RUN curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-    && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-    && chmod u+x terraform \
-    && mv terraform /usr/local/bin/ \
-    && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+    && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin/
 
 # Install Terragrunt
-RUN curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 \
-    && chmod u+x terragrunt_linux_amd64 \
-    && mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+RUN wget https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -O /usr/local/bin/terragrunt \
+    && chmod +x /usr/local/bin/terragrunt
 
 # Install Checkov using pip in the virtual environment
-RUN /opt/venv/bin/pip install --no-cache-dir checkov==${CHECKOV_VERSION}
+RUN pip3 install --no-cache-dir checkov==${CHECKOV_VERSION}
 
 # Install Terraform Docs
 RUN curl -LO https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz \
