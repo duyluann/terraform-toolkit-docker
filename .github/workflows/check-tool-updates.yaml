@@ -45,7 +45,7 @@ jobs:
           LATEST_TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
 
           # Initialize PR body and check if each tool has a version change
-          PR_BODY="Updated tool versions:\"
+          PR_BODY="Updated tool versions:<br>"
 
           if [ "$LATEST_TERRAFORM_VERSION" != "error" ] && [ "$CURRENT_TERRAFORM_VERSION" != "$LATEST_TERRAFORM_VERSION" ]; then
             sed -i "s/^ARG TERRAFORM_VERSION=.*/ARG TERRAFORM_VERSION=${LATEST_TERRAFORM_VERSION}/" Dockerfile
