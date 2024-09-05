@@ -56,6 +56,3 @@ RUN terraform --version && \
     terraform-docs --version && \
     tflint --version && \
     tfsec --version
-
-# Set the default entrypoint
-ENTRYPOINT ["/bin/bash"]
