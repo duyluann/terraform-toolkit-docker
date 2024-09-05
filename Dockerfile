@@ -26,13 +26,13 @@ RUN apk --no-cache add \
 
 # Create a Python virtual environment and upgrade pip
 RUN python3 -m venv /opt/venv \
-    && . /opt/venv/bin/activate \
-    && pip install --upgrade pip
+    && /bin/sh -c ". /opt/venv/bin/activate && pip install --upgrade pip"
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Terraform
 RUN curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
     && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+    && chmod +x terraform \
     && mv terraform /usr/local/bin/ \
     && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
@@ -47,12 +47,14 @@ RUN pip install --no-cache-dir checkov==${CHECKOV_VERSION}
 # Install Terraform Docs
 RUN curl -LO https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz \
     && tar -xvzf terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz \
+    && chmod +x terraform-docs \
     && mv terraform-docs /usr/local/bin/ \
     && rm terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz
 
 # Install TFLint
 RUN curl -LO https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_amd64.zip \
     && unzip tflint_linux_amd64.zip \
+    && chmod +x tflint \
     && mv tflint /usr/local/bin/ \
     && rm tflint_linux_amd64.zip
 
