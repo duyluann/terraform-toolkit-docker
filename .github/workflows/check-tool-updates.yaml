@@ -43,28 +43,26 @@ jobs:
           sed -i "s/^ARG TFLINT_VERSION=.*/ARG TFLINT_VERSION=${TFLINT_VERSION}/" Dockerfile
           sed -i "s/^ARG TFSEC_VERSION=.*/ARG TFSEC_VERSION=${TFSEC_VERSION}/" Dockerfile
 
-      # Create a new branch for the updates
-      - name: Create Branch for Updates
-        run: |
-          BRANCH_NAME="update-tool-versions-${{ github.run_id }}"
-          git checkout -b $BRANCH_NAME
-          git add Dockerfile
-          git commit -m "Update tool versions: Terraform ${TERRAFORM_VERSION}, Terragrunt ${TERRAGRUNT_VERSION}, Checkov ${CHECKOV_VERSION}, TF Docs ${TFDOCS_VERSION}, TFLint ${TFLINT_VERSION}, TFsec ${TFSEC_VERSION}" || echo "No changes to commit"
-          git push --set-upstream origin $BRANCH_NAME
+      # # Create a new branch for the updates
+      # - name: Create Branch for Updates
+      #   run: |
+      #     BRANCH_NAME="update-tool-versions-${{ github.run_id }}"
+      #     git checkout -b $BRANCH_NAME
+      #     git add Dockerfile
+      #     git commit -m "Update tool versions: Terraform ${TERRAFORM_VERSION}, Terragrunt ${TERRAGRUNT_VERSION}, Checkov ${CHECKOV_VERSION}, TF Docs ${TFDOCS_VERSION}, TFLint ${TFLINT_VERSION}, TFsec ${TFSEC_VERSION}" || echo "No changes to commit"
+      #     git push --set-upstream origin $BRANCH_NAME
 
-      # Create a pull request
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --exit-code || echo "Changes detected"
+          echo "changes=$(if git diff --quiet; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
+
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+        if: steps.check_changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v7
         with:
-          title: "Update tool versions"
-          body: |
-            This pull request updates the tool versions:
-            - Terraform: ${{ env.TERRAFORM_VERSION }}
-            - Terragrunt: ${{ env.TERRAGRUNT_VERSION }}
-            - Checkov: ${{ env.CHECKOV_VERSION }}
-            - TF Docs: ${{ env.TFDOCS_VERSION }}
-            - TFLint: ${{ env.TFLINT_VERSION }}
-            - TFsec: ${{ env.TFSEC_VERSION }}
-          branch: $BRANCH_NAME
-          base: main
-          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: Update tool versions'
+          title: 'chore: Update tool versions'
+          branch: update-tool-versions-${{ github.run_id }}
+          body: 'Update tool versions.'
