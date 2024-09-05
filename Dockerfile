@@ -1,7 +1,7 @@
-FROM alpine:3.18
+FROM alpine:latest
 
 # Set ARGs for tool versions
-ARG TERRAFORM_VERSION=1.9.5
+ARG TERRAFORM_VERSION=1.9.4
 ARG TERRAGRUNT_VERSION=0.67.2
 ARG CHECKOV_VERSION=3.2.245
 ARG TFDOCS_VERSION=0.18.0
@@ -47,7 +47,9 @@ RUN wget https://github.com/terraform-linters/tflint/releases/download/v${TFLINT
 # Install TFsec
 RUN wget https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 \
     && mv tfsec-linux-amd64 /usr/local/bin/tfsec \
-    && chmod +x /usr/local/bin/tfsec
+    && chmod +x /usr/local/bin/tfsec \
+    && apk del py3-pip \
+    && rm -rf /var/cache/apk/* /root/.cache
 
 # Verify installations
 RUN terraform --version && \
