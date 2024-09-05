@@ -83,7 +83,7 @@ jobs:
             PR_BODY+="\n- **TFSec**: $LATEST_TFSEC_VERSION\n  Changelog:\n  ```markdown\n  $TFSEC_CHANGELOG\n  ```\n"
           fi
 
-          # Export the PR body as an environment variable
+          # Properly export the multi-line PR body using <<EOF syntax
           echo "PR_BODY<<EOF" >> $GITHUB_ENV
           echo "$PR_BODY" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
