@@ -38,3 +38,4 @@ jobs:
           IMAGE_TAG=$(echo "${{ github.sha }}" | cut -c1-7)
           docker tag ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:latest ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${IMAGE_TAG}
           docker push ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${IMAGE_TAG}
+          docker push ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:latest
