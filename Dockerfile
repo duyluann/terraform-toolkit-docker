@@ -1,15 +1,15 @@
 # Use an official Alpine base image for a minimal footprint
-FROM alpine:latest
+FROM alpine:3.18
 
-# Set ARGs for tool versions (these can be updated dynamically)
+# Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.5.0
 ARG TERRAGRUNT_VERSION=0.45.0
-ARG CHECKOV_VERSION=2.0.1000
+ARG CHECKOV_VERSION=3.2.245
 ARG TFDOCS_VERSION=0.16.0
 ARG TFLINT_VERSION=0.43.0
 ARG TFSEC_VERSION=1.28.0
 
-# Install dependencies
+# Install necessary dependencies
 RUN apk --no-cache add \
     bash \
     curl \
@@ -18,7 +18,14 @@ RUN apk --no-cache add \
     unzip \
     python3 \
     py3-pip \
-    && ln -sf python3 /usr/bin/python
+    py3-virtualenv \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev
+
+# Upgrade pip to the latest version to handle prebuilt wheels
+RUN pip install --upgrade pip
 
 # Install Terraform
 RUN curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
@@ -31,8 +38,12 @@ RUN curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/v${TER
     && chmod +x terragrunt_linux_amd64 \
     && mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 
-# Install Checkov
-RUN pip3 install --no-cache-dir checkov==${CHECKOV_VERSION}
+# Create a Python virtual environment and activate it
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install Checkov inside the virtual environment
+RUN pip install --no-cache-dir checkov==${CHECKOV_VERSION}
 
 # Install Terraform Docs
 RUN curl -LO https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz \
