@@ -59,7 +59,7 @@ jobs:
 
           if [ "$LATEST_CHECKOV_VERSION" != "error" ] && [ "$CURRENT_CHECKOV_VERSION" != "$LATEST_CHECKOV_VERSION" ]; then
             sed -i "s/^ARG CHECKOV_VERSION=.*/ARG CHECKOV_VERSION=${LATEST_CHECKOV_VERSION}/" Dockerfile
-            PR_BODY+="- **Checkov**: [See Changelog of $LATEST_CHECKOV_VERSION](https://github.com/bridgecrewio/checkov/releases/tag/v$LATEST_CHECKOV_VERSION)<br>"
+            PR_BODY+="- **Checkov**: [See Changelog of $LATEST_CHECKOV_VERSION](https://github.com/bridgecrewio/checkov/releases/tag/$LATEST_CHECKOV_VERSION)<br>"
           fi
 
           if [ "$LATEST_TFDOCS_VERSION" != "error" ] && [ "$CURRENT_TFDOCS_VERSION" != "$LATEST_TFDOCS_VERSION" ]; then
