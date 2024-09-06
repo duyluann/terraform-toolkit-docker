@@ -9,17 +9,25 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Step 2: Set GIT_SHORT_SHA (first 7 characters of GITHUB_SHA)
       - name: Set GIT_SHORT_SHA
         run: echo "GIT_SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
+
+      # Step 3: Build an image from Dockerfile
       - name: Build an image from Dockerfile
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:$GIT_SHORT_SHA .
+          echo "Building image with tag: $GIT_SHORT_SHA"
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }} .
+
+      # Step 4: Run Trivy vulnerability scanner
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: '${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:$GIT_SHORT_SHA'
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
