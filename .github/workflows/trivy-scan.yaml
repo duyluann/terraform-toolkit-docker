@@ -1,0 +1,36 @@
+name: Trivy Scan
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set GIT_SHORT_SHA
+        run: echo "GIT_SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
+
+      - name: Build an image from Dockerfile
+        run: |
+          echo "Building image with tag: $GIT_SHORT_SHA"
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'

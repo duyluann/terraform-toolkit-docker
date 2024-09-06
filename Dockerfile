@@ -7,6 +7,7 @@ ARG CHECKOV_VERSION=3.2.246
 ARG TFDOCS_VERSION=0.18.0
 ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
+ARG TRIVY_VERSION=0.55.0
 
 # Install necessary dependencies and clean up
 RUN apk add --no-cache \
@@ -54,10 +55,17 @@ RUN wget https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSIO
     && mv tfsec-linux-amd64 /usr/local/bin/tfsec \
     && chmod +x /usr/local/bin/tfsec
 
+# Install Trivy
+RUN wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz \
+    && tar zxvf trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz \
+    && mv trivy /usr/local/bin/ \
+    && rm trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz
+
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
     checkov --version && \
     terraform-docs --version && \
     tflint --version && \
-    tfsec --version
+    tfsec --version && \
+    trivy --version
