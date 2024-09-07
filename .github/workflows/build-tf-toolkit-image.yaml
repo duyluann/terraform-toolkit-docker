@@ -19,7 +19,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          install: true
+          platforms: linux/amd64,linux/arm64
 
       # Log in to Docker Hub or another container registry
       - name: Log in to Docker Hub
