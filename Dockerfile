@@ -9,28 +9,28 @@ ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 ARG TRIVY_VERSION=0.55.0
 
-# Install necessary dependencies and clean up
-RUN apk add --no-cache \
-    bash \
-    curl \
-    wget \
-    unzip \
-    git \
-    jq \
-    python3 \
-    py3-pip \
-    vim \
-    build-base \
-    cargo \
-    && python3 -m venv /opt/venv \
-    && source /opt/venv/bin/activate \
-    && pip install --upgrade pip \
-    && pip install --no-cache-dir checkov==${CHECKOV_VERSION} \
-    && apk del py3-pip \
-    && rm -rf /var/cache/apk/* /root/.cache /tmp/*
+# # Install necessary dependencies and clean up
+# RUN apk add --no-cache \
+#     bash \
+#     curl \
+#     wget \
+#     unzip \
+#     git \
+#     jq \
+#     python3 \
+#     py3-pip \
+#     vim \
+#     build-base \
+#     cargo \
+#     && python3 -m venv /opt/venv \
+#     && source /opt/venv/bin/activate \
+#     && pip install --upgrade pip \
+#     && pip install --no-cache-dir checkov==${CHECKOV_VERSION} \
+#     && apk del py3-pip \
+#     && rm -rf /var/cache/apk/* /root/.cache /tmp/*
 
-# Set PATH to use the virtual environment
-ENV PATH="/opt/venv/bin:$PATH"
+# # Set PATH to use the virtual environment
+# ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Terraform (based on the architecture)
 RUN case $(uname -m) in \
