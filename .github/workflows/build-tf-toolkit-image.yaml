@@ -22,7 +22,6 @@ jobs:
 
       # Log in to Docker Hub or another container registry
       - name: Log in to Docker Hub
-        if: secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
