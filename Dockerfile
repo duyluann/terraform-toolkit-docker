@@ -22,6 +22,7 @@ RUN apk add --no-cache \
     vim \
     && python3 -m venv /opt/venv \
     && source /opt/venv/bin/activate \
+    && pip install --upgrade pip \
     && pip install --no-cache-dir checkov==${CHECKOV_VERSION} \
     && apk del py3-pip \
     && rm -rf /var/cache/apk/* /root/.cache
