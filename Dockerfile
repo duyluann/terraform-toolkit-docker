@@ -20,6 +20,8 @@ RUN apk add --no-cache \
     python3 \
     py3-pip \
     vim \
+    build-base \
+    cargo \
     && python3 -m venv /opt/venv \
     && source /opt/venv/bin/activate \
     && pip install --upgrade pip \
