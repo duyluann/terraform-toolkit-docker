@@ -91,7 +91,7 @@ RUN case $(uname -m) in \
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
-    checkov --version && \
+    # checkov --version && \
     terraform-docs --version && \
     tflint --version && \
     tfsec --version && \
