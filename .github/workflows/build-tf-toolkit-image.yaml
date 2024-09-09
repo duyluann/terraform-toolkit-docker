@@ -22,6 +22,7 @@ jobs:
 
       # Log in to Docker Hub or another container registry
       - name: Log in to Docker Hub
+        if: secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -32,11 +33,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-base-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-docker-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-base-buildx-
+            ${{ runner.os }}-docker-buildx-
 
-      # Build the Docker image
+      # Build and Push Docker image
       - name: Build and Push Docker image
         run: |
           GIT_SHORT_SHA=${GITHUB_SHA::7}
