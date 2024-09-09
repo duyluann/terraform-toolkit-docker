@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM alpine:latest
 
 # Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.9.5
@@ -9,8 +9,8 @@ ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 ARG TRIVY_VERSION=0.55.0
 
-# Install necessary dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install necessary dependencies and clean up
+RUN apk add --no-cache \
     bash \
     curl \
     wget \
@@ -18,17 +18,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     jq \
     python3 \
-    python3-venv \
-    python3-pip \
+    py3-pip \
     vim \
-    build-essential \
     && python3 -m venv /opt/venv \
     && source /opt/venv/bin/activate \
-    && pip install --upgrade pip \
     && pip install --no-cache-dir checkov==${CHECKOV_VERSION} \
-    && apt-get remove -y python3-pip \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* /root/.cache
+    && apk del py3-pip \
+    && rm -rf /var/cache/apk/* /root/.cache
 
 # Set PATH to use the virtual environment
 ENV PATH="/opt/venv/bin:$PATH"
