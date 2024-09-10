@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/multi-arch
   workflow_dispatch:
 
 jobs:
@@ -31,16 +32,17 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-base-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-docker-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-base-buildx-
+            ${{ runner.os }}-docker-buildx-
 
-      # Build the Docker image
+      # Build and Push Docker image
       - name: Build and Push Docker image
         run: |
           GIT_SHORT_SHA=${GITHUB_SHA::7}
           docker buildx build \
             --push \
+            --platform linux/amd64,linux/arm64 \
             -t ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${GIT_SHORT_SHA} \
             -t ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:latest \
             -f Dockerfile . \
