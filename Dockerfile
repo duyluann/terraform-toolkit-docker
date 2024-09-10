@@ -9,7 +9,7 @@ ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 ARG TRIVY_VERSION=0.55.0
 
-# # Install necessary dependencies
+# Install necessary dependencies
 RUN apt-get update -y && \
     apt-get install -y \
     unzip \
@@ -20,12 +20,14 @@ RUN apt-get update -y && \
     jq \
     python3 \
     python3-pip && \
-    wget
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Terraform (based on the architecture)
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
     wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip \
     && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip -d /usr/local/bin/ \
@@ -35,6 +37,7 @@ RUN case $(uname -m) in \
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
     wget https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${ARCH} -O /usr/local/bin/terragrunt \
     && chmod +x /usr/local/bin/terragrunt
@@ -43,6 +46,7 @@ RUN case $(uname -m) in \
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
     wget https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz \
     && tar -xzf terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz \
@@ -53,6 +57,7 @@ RUN case $(uname -m) in \
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
     wget https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${ARCH}.zip \
     && unzip tflint_linux_${ARCH}.zip \
@@ -63,6 +68,7 @@ RUN case $(uname -m) in \
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
     wget https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-${ARCH} \
     && mv tfsec-linux-${ARCH} /usr/local/bin/tfsec \
@@ -72,6 +78,7 @@ RUN case $(uname -m) in \
 RUN case $(uname -m) in \
       x86_64) ARCH=64bit ;; \
       aarch64) ARCH=ARM64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
     wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz \
     && tar zxvf trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz \
@@ -79,7 +86,7 @@ RUN case $(uname -m) in \
     && rm trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz
 
 # Install Checkov
-RUN pip3 install checkov && \
+RUN pip3 install checkov==${CHECKOV_VERSION} && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
