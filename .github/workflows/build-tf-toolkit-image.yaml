@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/multi-arch
     tags:
       - "v*.*.*"
   workflow_dispatch:
@@ -40,7 +41,6 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=sha,format=short
-            type=raw,value=latest
           flavor: |
             latest=true
 
@@ -67,10 +67,7 @@ jobs:
         with:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          tags: |
-            ${{ env.REGISTRY_IMAGE }}:${{ env.GIT_SHORT_SHA }}
-            ${{ env.REGISTRY_IMAGE }}:latest
-            ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          tags: ${{ steps.meta.outputs.tags }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true,push=true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
