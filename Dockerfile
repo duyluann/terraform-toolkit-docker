@@ -14,13 +14,12 @@ RUN apt-get update -y && \
     apt-get install -y \
     unzip \
     wget \
-    vim \
+    vi \
     git \
     curl \
     jq \
     python3 \
     python3-pip && \
-    python3 -m pip install --upgrade pip && \
     wget
 
 # Install Terraform (based on the architecture)
@@ -80,7 +79,7 @@ RUN case $(uname -m) in \
     && rm trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz
 
 # Install Checkov
-RUN pip3 install --no-cache-dir checkov && \
+RUN pip3 install checkov && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
