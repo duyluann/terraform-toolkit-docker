@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM ubuntu:22.04
 
 # Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.9.5
@@ -9,28 +9,19 @@ ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 ARG TRIVY_VERSION=0.55.0
 
-# # Install necessary dependencies and clean up
-# RUN apk add --no-cache \
-#     bash \
-#     curl \
-#     wget \
-#     unzip \
-#     git \
-#     jq \
-#     python3 \
-#     py3-pip \
-#     vim \
-#     build-base \
-#     cargo \
-#     && python3 -m venv /opt/venv \
-#     && source /opt/venv/bin/activate \
-#     && pip install --upgrade pip \
-#     && pip install --no-cache-dir checkov==${CHECKOV_VERSION} \
-#     && apk del py3-pip \
-#     && rm -rf /var/cache/apk/* /root/.cache /tmp/*
-
-# # Set PATH to use the virtual environment
-# ENV PATH="/opt/venv/bin:$PATH"
+# # Install necessary dependencies
+RUN apt-get update -y && \
+    apt-get install -y \
+    unzip \
+    wget \
+    vim \
+    git \
+    curl \
+    jq \
+    python3 \
+    python3-pip && \
+    python3 -m pip install --upgrade pip && \
+    wget
 
 # Install Terraform (based on the architecture)
 RUN case $(uname -m) in \
@@ -88,10 +79,15 @@ RUN case $(uname -m) in \
     && mv trivy /usr/local/bin/ \
     && rm trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz
 
+# Install Checkov
+RUN pip3 install --no-cache-dir checkov && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
-    # checkov --version && \
+    checkov --version && \
     terraform-docs --version && \
     tflint --version && \
     tfsec --version && \
