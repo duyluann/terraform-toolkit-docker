@@ -12,6 +12,7 @@ ARG TRIVY_VERSION=0.55.0
 # Install necessary dependencies
 RUN apt-get update -y && \
     apt-get install -y \
+    unzip \
     wget \
     python3 \
     python3-pip && \
