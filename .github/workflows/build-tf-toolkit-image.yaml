@@ -52,13 +52,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-buildx-
+      - name: Pull existing image
+        run: |
+          docker pull ${{ env.REGISTRY_IMAGE }}:latest || true
 
       - name: Build and push by digest
         id: build
@@ -68,13 +64,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true,push=true
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          cache-from: type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
 
       - name: Export digest
         run: |
