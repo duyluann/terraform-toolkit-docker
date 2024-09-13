@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY_IMAGE: duyl97/terraform-toolkit
+  REGISTRY_IMAGE: duyluann/terraform-toolkit
 
 jobs:
   build:
