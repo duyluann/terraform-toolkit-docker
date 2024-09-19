@@ -20,7 +20,7 @@ RUN apt-get update -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Terraform (based on the architecture)
+# Install Terraform
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -30,7 +30,7 @@ RUN case $(uname -m) in \
     && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip -d /usr/local/bin/ \
     && rm terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip
 
-# Install Terragrunt (based on the architecture)
+# Install Terragrunt
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -39,7 +39,7 @@ RUN case $(uname -m) in \
     wget https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${ARCH} -O /usr/local/bin/terragrunt \
     && chmod +x /usr/local/bin/terragrunt
 
-# Install Terraform Docs (based on the architecture)
+# Install Terraform Docs
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -50,7 +50,7 @@ RUN case $(uname -m) in \
     && mv terraform-docs /usr/local/bin/ \
     && rm terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz
 
-# Install TFLint (based on the architecture)
+# Install TFLint
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -61,7 +61,7 @@ RUN case $(uname -m) in \
     && mv tflint /usr/local/bin/ \
     && rm tflint_linux_${ARCH}.zip
 
-# Install TFsec (based on the architecture)
+# Install TFsec
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -71,7 +71,7 @@ RUN case $(uname -m) in \
     && mv tfsec-linux-${ARCH} /usr/local/bin/tfsec \
     && chmod +x /usr/local/bin/tfsec
 
-# Install Trivy (based on the architecture)
+# Install Trivy
 RUN case $(uname -m) in \
       x86_64) ARCH=64bit ;; \
       aarch64) ARCH=ARM64 ;; \
