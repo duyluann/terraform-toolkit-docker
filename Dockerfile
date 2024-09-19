@@ -23,8 +23,16 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Add a non-root user
-RUN groupadd --gid 1001 terraform && \
-    useradd --uid 1001 --gid terraform --shell /bin/bash --create-home terraform-user
+ARG USERNAME=tf-user
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Install Terraform
 RUN case $(uname -m) in \
@@ -116,11 +124,8 @@ RUN case $(uname -m) in \
     rm eksctl_${PLATFORM}.tar.gz && \
     mv /tmp/eksctl /usr/local/bin/
 
-# Set permissions for the non-root user
-RUN chown -R terraform-user:terraform /usr/local/bin/
-
 # Switch to non-root user
-USER terraform-user
+USER $USERNAME
 
 # Verify installations
 RUN terraform --version && \
@@ -134,4 +139,4 @@ RUN terraform --version && \
     eksctl version
 
 # Set default user working directory
-WORKDIR /home/terraform-user
+WORKDIR /home/$USERNAME
