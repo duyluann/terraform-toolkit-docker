@@ -37,6 +37,7 @@ jobs:
           CURRENT_TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_PRE_COMMIT_VERSION=$(grep '^ARG PRE_COMMIT_VERSION=' Dockerfile | cut -d '=' -f2)
 
           # Fetch the latest versions using curl and jq, with error handling
           LATEST_TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
@@ -47,6 +48,7 @@ jobs:
           LATEST_TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
           LATEST_TRIVY_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/trivy/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
           LATEST_EKSCTL_VERSION=$(curl -s https://api.github.com/repos/eksctl-io/eksctl/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
+          LATEST_PRE_COMMIT_VERSION=$(curl -s https://api.github.com/repos/pre-commit/pre-commit/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
 
           # Initialize PR body and check if each tool has a version change
           PR_BODY="Updated tool versions:<br>"
@@ -89,6 +91,11 @@ jobs:
           if [ "$LATEST_EKSCTL_VERSION" != "error" ] && [ "$CURRENT_EKSCTL_VERSION" != "$LATEST_EKSCTL_VERSION" ]; then
             sed -i "s/^ARG EKSCTL_VERSION=.*/ARG EKSCTL_VERSION=${LATEST_EKSCTL_VERSION}/" Dockerfile
             PR_BODY+="- **eksctl**: [See Changelog of $LATEST_EKSCTL_VERSION](https://github.com/eksctl-io/eksctl/releases/tag/v$LATEST_EKSCTL_VERSION)<br>"
+          fi
+
+          if [ "$LATEST_PRE_COMMIT_VERSION" != "error" ] && [ "$CURRENT_PRE_COMMIT_VERSION" != "$LATEST_PRE_COMMIT_VERSION" ]; then
+            sed -i "s/^ARG PRE_COMMIT_VERSION=.*/ARG PRE_COMMIT_VERSION=${LATEST_PRE_COMMIT_VERSION}/" Dockerfile
+            PR_BODY+="- **Pre-commit**: [See Changelog of $LATEST_PRE_COMMIT_VERSION](https://github.com/pre-commit/pre-commit/releases/tag/v$LATEST_PRE_COMMIT_VERSION)<br>"
           fi
 
           # Properly export the multi-line PR body using <<EOF syntax
