@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.4.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.3.1...v1.4.0) (2024-09-19)
+
+
+### Features
+
+* Install `pre-commit` ([#36](https://github.com/duyluann/terraform-toolkit-docker/issues/36)) ([0ac115d](https://github.com/duyluann/terraform-toolkit-docker/commit/0ac115dfeb9e98b365f04d8eea189636d6cd56fb))
+
 ## [1.3.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.3.0...v1.3.1) (2024-09-19)
 
 
