@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.3.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.2.0...v1.3.0) (2024-09-19)
+
+
+### Features
+
+* add user ([#34](https://github.com/duyluann/terraform-toolkit-docker/issues/34)) ([014a681](https://github.com/duyluann/terraform-toolkit-docker/commit/014a68192c9fa6c39fb9b1c383a8a4b409acadd5))
+
 # [1.2.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.1.1...v1.2.0) (2024-09-19)
 
 
