@@ -22,6 +22,10 @@ RUN apt-get update -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Add a non-root user
+RUN groupadd --gid 1001 terraform && \
+    useradd --uid 1001 --gid terraform --shell /bin/bash --create-home terraform-user
+
 # Install Terraform
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
@@ -112,6 +116,12 @@ RUN case $(uname -m) in \
     rm eksctl_${PLATFORM}.tar.gz && \
     mv /tmp/eksctl /usr/local/bin/
 
+# Set permissions for the non-root user
+RUN chown -R terraform-user:terraform /usr/local/bin/
+
+# Switch to non-root user
+USER terraform-user
+
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
@@ -122,3 +132,6 @@ RUN terraform --version && \
     trivy --version && \
     aws --version && \
     eksctl version
+
+# Set default user working directory
+WORKDIR /home/terraform-user
