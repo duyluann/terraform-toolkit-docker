@@ -35,6 +35,8 @@ jobs:
           CURRENT_TFDOCS_VERSION=$(grep '^ARG TFDOCS_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
+          CURRENT_EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
 
           # Fetch the latest versions using curl and jq, with error handling
           LATEST_TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
@@ -43,6 +45,8 @@ jobs:
           LATEST_TFDOCS_VERSION=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
           LATEST_TFLINT_VERSION=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
           LATEST_TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
+          LATEST_TRIVY_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/trivy/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
+          LATEST_EKSCTL_VERSION=$(curl -s https://api.github.com/repos/eksctl-io/eksctl/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
 
           # Initialize PR body and check if each tool has a version change
           PR_BODY="Updated tool versions:<br>"
@@ -75,6 +79,16 @@ jobs:
           if [ "$LATEST_TFSEC_VERSION" != "error" ] && [ "$CURRENT_TFSEC_VERSION" != "$LATEST_TFSEC_VERSION" ]; then
             sed -i "s/^ARG TFSEC_VERSION=.*/ARG TFSEC_VERSION=${LATEST_TFSEC_VERSION}/" Dockerfile
             PR_BODY+="- **TFSec**: [See Changelog of $LATEST_TFSEC_VERSION](https://github.com/aquasecurity/tfsec/releases/tag/v$LATEST_TFSEC_VERSION)<br>"
+          fi
+
+          if [ "$LATEST_TRIVY_VERSION" != "error" ] && [ "$CURRENT_TRIVY_VERSION" != "$LATEST_TRIVY_VERSION" ]; then
+            sed -i "s/^ARG TRIVY_VERSION=.*/ARG TRIVY_VERSION=${LATEST_TRIVY_VERSION}/" Dockerfile
+            PR_BODY+="- **Trivy**: [See Changelog of $LATEST_TRIVY_VERSION](https://github.com/aquasecurity/trivy/releases/tag/v$LATEST_TRIVY_VERSION)<br>"
+          fi
+
+          if [ "$LATEST_EKSCTL_VERSION" != "error" ] && [ "$CURRENT_EKSCTL_VERSION" != "$LATEST_EKSCTL_VERSION" ]; then
+            sed -i "s/^ARG EKSCTL_VERSION=.*/ARG EKSCTL_VERSION=${LATEST_EKSCTL_VERSION}/" Dockerfile
+            PR_BODY+="- **eksctl**: [See Changelog of $LATEST_EKSCTL_VERSION](https://github.com/eksctl-io/eksctl/releases/tag/v$LATEST_EKSCTL_VERSION)<br>"
           fi
 
           # Properly export the multi-line PR body using <<EOF syntax

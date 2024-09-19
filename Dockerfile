@@ -8,6 +8,7 @@ ARG TFDOCS_VERSION=0.18.0
 ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 ARG TRIVY_VERSION=0.55.0
+ARG EKSCTL_VERSION=0.190.0
 
 # Install necessary dependencies
 RUN apt-get update -y && \
@@ -105,10 +106,10 @@ RUN case $(uname -m) in \
       aarch64) ARCH=arm64 ;; \
       *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
-    PLATFORM=$(uname -s)_$ARCH && \
-    curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz" && \
-    tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && \
-    rm eksctl_$PLATFORM.tar.gz && \
+    PLATFORM=Linux_$ARCH && \
+    curl -sLO "https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_VERSION}/eksctl_${PLATFORM}.tar.gz" && \
+    tar -xzf eksctl_${PLATFORM}.tar.gz -C /tmp && \
+    rm eksctl_${PLATFORM}.tar.gz && \
     mv /tmp/eksctl /usr/local/bin/
 
 # Verify installations
