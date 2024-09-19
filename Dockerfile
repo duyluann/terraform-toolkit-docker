@@ -15,6 +15,7 @@ RUN apt-get update -y && \
     git \
     unzip \
     wget \
+    curl \
     python3 \
     python3-pip && \
     apt-get clean && \
@@ -86,6 +87,17 @@ RUN case $(uname -m) in \
 RUN pip3 install checkov==${CHECKOV_VERSION} && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Install AWS CLI
+RUN case $(uname -m) in \
+      x86_64) ARCH=x86_64 ;; \
+      aarch64) ARCH=aarch64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf awscliv2.zip aws
 
 # Verify installations
 RUN terraform --version && \
