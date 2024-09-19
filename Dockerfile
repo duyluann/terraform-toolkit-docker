@@ -106,4 +106,5 @@ RUN terraform --version && \
     terraform-docs --version && \
     tflint --version && \
     tfsec --version && \
-    trivy --version
+    trivy --version && \
+    aws --version
