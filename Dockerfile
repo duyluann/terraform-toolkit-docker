@@ -99,6 +99,18 @@ RUN case $(uname -m) in \
     ./aws/install && \
     rm -rf awscliv2.zip aws
 
+# Install eksctl
+RUN case $(uname -m) in \
+      x86_64) ARCH=amd64 ;; \
+      aarch64) ARCH=arm64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac && \
+    PLATFORM=$(uname -s)_$ARCH && \
+    curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz" && \
+    tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && \
+    rm eksctl_$PLATFORM.tar.gz && \
+    mv /tmp/eksctl /usr/local/bin/
+
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
@@ -107,4 +119,5 @@ RUN terraform --version && \
     tflint --version && \
     tfsec --version && \
     trivy --version && \
-    aws --version
+    aws --version && \
+    eksctl version
