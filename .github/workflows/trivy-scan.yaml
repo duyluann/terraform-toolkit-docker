@@ -8,6 +8,9 @@ on:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -15,17 +18,23 @@ jobs:
       - name: Set GIT_SHORT_SHA
         run: echo "GIT_SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
 
-      - name: Build an image from Dockerfile
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push Docker image for ${{ matrix.architecture }}
         run: |
-          echo "Building image with tag: $GIT_SHORT_SHA"
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }} .
+          echo "Building image for architecture: ${{ matrix.architecture }} with tag: $GIT_SHORT_SHA"
+          docker buildx create --use
+          docker buildx build --platform linux/${{ matrix.architecture }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }}-${{ matrix.architecture }} \
+            --push .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.24.0
         with:
-          image-ref: ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }}-${{ matrix.architecture }}
           format: 'sarif'
-          output: 'trivy-results.sarif'
+          output: 'trivy-results-${{ matrix.architecture }}.sarif'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
@@ -33,4 +42,4 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: 'trivy-results-${{ matrix.architecture }}.sarif'
