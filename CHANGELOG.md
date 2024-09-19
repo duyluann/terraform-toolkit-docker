@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.2.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.1.1...v1.2.0) (2024-09-19)
+
+
+### Features
+
+* add tools for image ([#32](https://github.com/duyluann/terraform-toolkit-docker/issues/32)) ([9d0a553](https://github.com/duyluann/terraform-toolkit-docker/commit/9d0a553cd6cd2faa818eaa56d889f8e8ca900427))
+
 ## [1.1.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.1.0...v1.1.1) (2024-09-13)
 
 
