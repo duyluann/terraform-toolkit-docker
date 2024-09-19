@@ -9,6 +9,7 @@ ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 ARG TRIVY_VERSION=0.55.2
 ARG EKSCTL_VERSION=0.190.0
+ARG PRE_COMMIT_VERSION=2.20.0
 
 # Install necessary dependencies
 RUN apt-get update -y && \
@@ -124,6 +125,9 @@ RUN case $(uname -m) in \
     rm eksctl_${PLATFORM}.tar.gz && \
     mv /tmp/eksctl /usr/local/bin/
 
+# Install pre-commit (specific version)
+RUN pip3 install pre-commit==${PRE_COMMIT_VERSION}
+
 # Switch to non-root user
 USER $USERNAME
 
@@ -136,7 +140,8 @@ RUN terraform --version && \
     tfsec --version && \
     trivy --version && \
     aws --version && \
-    eksctl version
+    eksctl version && \
+    pre-commit --version
 
 # Set default user working directory
 WORKDIR /home/$USERNAME
