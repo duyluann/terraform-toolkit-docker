@@ -8,6 +8,7 @@ ARG TFDOCS_VERSION=0.18.0
 ARG TFLINT_VERSION=0.53.0
 ARG TFSEC_VERSION=1.28.10
 ARG TRIVY_VERSION=0.55.0
+ARG EKSCTL_VERSION=0.190.0
 
 # Install necessary dependencies
 RUN apt-get update -y && \
@@ -15,12 +16,13 @@ RUN apt-get update -y && \
     git \
     unzip \
     wget \
+    curl \
     python3 \
     python3-pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Terraform (based on the architecture)
+# Install Terraform
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -30,7 +32,7 @@ RUN case $(uname -m) in \
     && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip -d /usr/local/bin/ \
     && rm terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip
 
-# Install Terragrunt (based on the architecture)
+# Install Terragrunt
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -39,7 +41,7 @@ RUN case $(uname -m) in \
     wget https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${ARCH} -O /usr/local/bin/terragrunt \
     && chmod +x /usr/local/bin/terragrunt
 
-# Install Terraform Docs (based on the architecture)
+# Install Terraform Docs
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -50,7 +52,7 @@ RUN case $(uname -m) in \
     && mv terraform-docs /usr/local/bin/ \
     && rm terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz
 
-# Install TFLint (based on the architecture)
+# Install TFLint
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -61,7 +63,7 @@ RUN case $(uname -m) in \
     && mv tflint /usr/local/bin/ \
     && rm tflint_linux_${ARCH}.zip
 
-# Install TFsec (based on the architecture)
+# Install TFsec
 RUN case $(uname -m) in \
       x86_64) ARCH=amd64 ;; \
       aarch64) ARCH=arm64 ;; \
@@ -71,7 +73,7 @@ RUN case $(uname -m) in \
     && mv tfsec-linux-${ARCH} /usr/local/bin/tfsec \
     && chmod +x /usr/local/bin/tfsec
 
-# Install Trivy (based on the architecture)
+# Install Trivy
 RUN case $(uname -m) in \
       x86_64) ARCH=64bit ;; \
       aarch64) ARCH=ARM64 ;; \
@@ -87,6 +89,29 @@ RUN pip3 install checkov==${CHECKOV_VERSION} && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install AWS CLI
+RUN case $(uname -m) in \
+      x86_64) ARCH=x86_64 ;; \
+      aarch64) ARCH=aarch64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf awscliv2.zip aws
+
+# Install eksctl
+RUN case $(uname -m) in \
+      x86_64) ARCH=amd64 ;; \
+      aarch64) ARCH=arm64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac && \
+    PLATFORM=Linux_$ARCH && \
+    curl -sLO "https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_VERSION}/eksctl_${PLATFORM}.tar.gz" && \
+    tar -xzf eksctl_${PLATFORM}.tar.gz -C /tmp && \
+    rm eksctl_${PLATFORM}.tar.gz && \
+    mv /tmp/eksctl /usr/local/bin/
+
 # Verify installations
 RUN terraform --version && \
     terragrunt --version && \
@@ -94,4 +119,6 @@ RUN terraform --version && \
     terraform-docs --version && \
     tflint --version && \
     tfsec --version && \
-    trivy --version
+    trivy --version && \
+    aws --version && \
+    eksctl version
