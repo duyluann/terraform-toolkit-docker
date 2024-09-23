@@ -1,0 +1,35 @@
+pipeline:
+  identifier: Build_duyluann_github_repo_template_1727008860055
+  name: Build github-repo-template
+  orgIdentifier: default
+  projectIdentifier: devops4life
+  properties:
+    ci:
+      codebase:
+        build: <+input>
+        connectorRef: account.Github_OAuth_1727008816467
+        repoName: duyluann/github-repo-template
+  stages:
+    - stage:
+        identifier: build
+        name: build
+        spec:
+          caching:
+            enabled: true
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  identifier: echo
+                  name: echo
+                  spec:
+                    command: echo hello world
+                  timeout: ""
+                  type: Run
+          platform:
+            arch: Arm64
+            os: MacOS
+          runtime:
+            spec: {}
+            type: Docker
+        type: CI
