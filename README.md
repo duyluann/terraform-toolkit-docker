@@ -45,6 +45,9 @@ You can then use the following tools from within the container:
 - terraform-docs
 - tfsec
 - tflint
+- trivy
+- eksctl
+- pre-commit
 
 ### 💡 Example
 Run Terraform commands inside the container:
