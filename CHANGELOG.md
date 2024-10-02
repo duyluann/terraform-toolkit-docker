@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.2](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.4.1...v1.4.2) (2024-10-02)
+
+
+### Bug Fixes
+
+* Update build-tf-toolkit-image.yaml ([#43](https://github.com/duyluann/terraform-toolkit-docker/issues/43)) ([82a3c59](https://github.com/duyluann/terraform-toolkit-docker/commit/82a3c59f6c5a23ebc1095d82bf27b825a6c8fb66))
+
 ## [1.4.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.4.0...v1.4.1) (2024-10-02)
 
 
