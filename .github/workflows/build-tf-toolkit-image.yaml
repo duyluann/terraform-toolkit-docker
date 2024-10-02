@@ -3,7 +3,7 @@ name: Build Terraform Toolkit Image
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*"
   workflow_dispatch:
 
 env:
@@ -58,7 +58,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: ${{ matrix.platform }}
-          tags: ${{ steps.meta.outputs.tags }},${{ env.REGISTRY_IMAGE }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true,push=true
           cache-from: type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
