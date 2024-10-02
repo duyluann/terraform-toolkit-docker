@@ -1,9 +1,8 @@
 name: Build Terraform Toolkit Image
 
 on:
-  create:
-    tags:
-      - "v*"
+  release:
+    types: [published]
   workflow_dispatch:
 
 env:
