@@ -39,6 +39,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=sha,format=short
+            type=semver,pattern={{version}}
           flavor: |
             latest=true
 
@@ -60,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: ${{ matrix.platform }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }},${{ env.REGISTRY_IMAGE }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true,push=true
           cache-from: type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
@@ -103,6 +104,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=sha,format=short
+            type=semver,pattern={{version}}
           flavor: |
             latest=true
 
