@@ -40,7 +40,7 @@ jobs:
             --cache-to type=local,dest=/tmp/.buildx-cache,mode=max .
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.29.0
         with:
           image-ref: ${{ secrets.DOCKER_USERNAME }}/terraform-toolkit:${{ env.GIT_SHORT_SHA }}-${{ matrix.architecture }}
           format: 'sarif'
