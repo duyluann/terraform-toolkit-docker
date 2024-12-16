@@ -113,7 +113,7 @@ jobs:
         if: steps.check_changes.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: 'chore: Update tool versions'
-          title: 'chore: Update tool versions'
+          commit-message: 'feat: Update tool versions'
+          title: 'feat: Update tool versions'
           branch: update-tool-versions
           body: ${{ env.PR_BODY }}
