@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.9.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.8.0...v1.9.0) (2025-01-06)
+
+
+### Features
+
+* Update tool versions ([#75](https://github.com/duyluann/terraform-toolkit-docker/issues/75)) ([91f4c50](https://github.com/duyluann/terraform-toolkit-docker/commit/91f4c50143c27dc7548317c30bc68422b6b72ff8))
+
 # [1.8.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.7.0...v1.8.0) (2024-12-31)
 
 
