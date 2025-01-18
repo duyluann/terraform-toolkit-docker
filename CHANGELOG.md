@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.11.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.10.0...v1.11.0) (2025-01-18)
+
+
+### Features
+
+* Create update-license.yml ([742a206](https://github.com/duyluann/terraform-toolkit-docker/commit/742a2063ffbf2bc2245493e0bc9011cbdeccbf25))
+
 # [1.10.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.9.0...v1.10.0) (2025-01-17)
 
 
