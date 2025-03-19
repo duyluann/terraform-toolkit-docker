@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.11.1
