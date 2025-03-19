@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.20.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.19.0...v1.20.0) (2025-03-19)
+
+
+### Bug Fixes
+
+* Snyk Security upgrade ubuntu from 22.04 to 24.04 ([#92](https://github.com/duyluann/terraform-toolkit-docker/issues/92)) ([9693402](https://github.com/duyluann/terraform-toolkit-docker/commit/969340261ab7fcd398c14457afd8583a844835fe))
+
+
+### Features
+
+* Update tool versions ([#91](https://github.com/duyluann/terraform-toolkit-docker/issues/91)) ([733d6da](https://github.com/duyluann/terraform-toolkit-docker/commit/733d6dacdae29c5d4a6aef26be9a7735ccf4b4f1))
+
 # [1.19.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.18.0...v1.19.0) (2025-03-10)
 
 
