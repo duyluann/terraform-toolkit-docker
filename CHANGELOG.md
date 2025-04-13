@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.25.2](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.25.1...v1.25.2) (2025-04-13)
+
+
+### Bug Fixes
+
+* change pull request merge strategy to squash ([dd020c9](https://github.com/duyluann/terraform-toolkit-docker/commit/dd020c9ff8fef9cb293407982bc59448563aada6))
+
 ## [1.25.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.25.0...v1.25.1) (2025-04-13)
 
 
