@@ -126,7 +126,7 @@ RUN case $(uname -m) in \
     mv /tmp/eksctl /usr/local/bin/
 
 # Install pre-commit (specific version)
-RUN pip3 install pre-commit==${PRE_COMMIT_VERSION}
+RUN pip3 install pre-commit==${PRE_COMMIT_VERSION} --break-system-packages
 
 # Switch to non-root user
 USER $USERNAME
