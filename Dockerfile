@@ -28,12 +28,12 @@ ARG USERNAME=tf-user
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-RUN getent group 1000 || groupadd -g 1000 tf-user \
-    && id -u 1000 || useradd --uid 1000 --gid 1000 -m tf-user \
-    && apt-get update \
-    && apt-get install -y sudo \
-    && echo "tf-user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/tf-user \
-    && chmod 0440 /etc/sudoers.d/tf-user
+RUN getent group $USER_GID || groupadd -g $USER_GID $USERNAME \
+  && id -u $USER_UID || useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+  && apt-get update \
+  && apt-get install -y sudo \
+  && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/$USERNAME > /dev/null \
+  && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Install Terraform
 RUN case $(uname -m) in \
