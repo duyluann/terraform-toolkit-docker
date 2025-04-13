@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23.7](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.23.6...v1.23.7) (2025-04-13)
+
+
+### Bug Fixes
+
+* Simplify user creation logic in Dockerfile for consistency ([1e10024](https://github.com/duyluann/terraform-toolkit-docker/commit/1e10024b4e5340ddbe55e6783524ba131b0d391b))
+
 ## [1.23.6](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.23.5...v1.23.6) (2025-04-13)
 
 
