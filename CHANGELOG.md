@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.25.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.24.0...v1.25.0) (2025-04-13)
+
+
+### Features
+
+* Add auto-approval and automerge for tool version update PRs ([#97](https://github.com/duyluann/terraform-toolkit-docker/issues/97)) ([f65fb78](https://github.com/duyluann/terraform-toolkit-docker/commit/f65fb7859c5a76ff7855d545c0cc793479082f87))
+
 # [1.24.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.23.7...v1.24.0) (2025-04-13)
 
 
