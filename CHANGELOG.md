@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.25.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.25.0...v1.25.1) (2025-04-13)
+
+
+### Bug Fixes
+
+* restore auto-approval step in check-tool-updates workflow ([f486d0a](https://github.com/duyluann/terraform-toolkit-docker/commit/f486d0a73969bfaa89c9348663c9c69aaf111ea2))
+
 # [1.25.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.24.0...v1.25.0) (2025-04-13)
 
 
