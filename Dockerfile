@@ -28,8 +28,8 @@ ARG USERNAME=tf-user
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-RUN groupadd -g 1000 tf-user || groupmod -n tf-user $(getent group 1000 | cut -d: -f1) \
-    && useradd --uid 1000 --gid 1000 -m tf-user \
+RUN getent group 1000 || groupadd -g 1000 tf-user \
+    && id -u 1000 || useradd --uid 1000 --gid 1000 -m tf-user \
     && apt-get update \
     && apt-get install -y sudo \
     && echo "tf-user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/tf-user \
