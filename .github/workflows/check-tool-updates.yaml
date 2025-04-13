@@ -120,7 +120,7 @@ jobs:
           body: ${{ env.PR_BODY }}
 
       - name: Auto approve
-        if: steps.cpr.outputs.pull-request-operation == 'created'
+        # if: steps.cpr.outputs.pull-request-operation == 'created'
         run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
