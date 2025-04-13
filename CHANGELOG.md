@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.26.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.25.2...v1.26.0) (2025-04-13)
+
+
+### Bug Fixes
+
+* use dynamic pull request number for automerge step ([a1cb478](https://github.com/duyluann/terraform-toolkit-docker/commit/a1cb4780c903052c8aab3fd806783c48eee59e9d))
+
+
+### Features
+
+* Update tool versions ([#100](https://github.com/duyluann/terraform-toolkit-docker/issues/100)) ([f38270c](https://github.com/duyluann/terraform-toolkit-docker/commit/f38270cabe17911cb92b6b803e359e42a0fffd03))
+
 ## [1.25.2](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.25.1...v1.25.2) (2025-04-13)
 
 
