@@ -98,7 +98,7 @@ RUN case $(uname -m) in \
     && rm trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz
 
 # Install Checkov
-RUN pip3 install checkov==${CHECKOV_VERSION} && \
+RUN pip3 install checkov==${CHECKOV_VERSION} --break-system-packages && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
