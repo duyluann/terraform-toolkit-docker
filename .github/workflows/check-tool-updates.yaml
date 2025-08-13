@@ -16,7 +16,7 @@ jobs:
     steps:
       # Checkout the repo
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Set up git identity to commit changes
       - name: Set up Git

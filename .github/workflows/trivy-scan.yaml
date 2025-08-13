@@ -13,7 +13,7 @@ jobs:
         architecture: [amd64, arm64]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set GIT_SHORT_SHA
         run: echo "GIT_SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
