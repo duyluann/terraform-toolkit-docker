@@ -47,6 +47,16 @@ The repository uses GitHub Actions for automated workflows:
 
 ### Development Workflow
 
+**Git Workflow**:
+- **Never commit directly to the `main` branch**
+- **Always create a feature branch** for changes
+- Use descriptive branch names (e.g., `feat/add-new-tool`, `fix/update-versions`, `optimize-docker-image-size`)
+- Create pull requests for all changes to be merged into `main`
+- **NEVER automatically add AI attribution signatures** in commits like:
+  - "🤖 Generated with [Claude Code]"
+  - "Co-Authored-By: Claude <noreply@anthropic.com>"
+  - Any AI tool attribution or signature
+
 **Pre-commit Hooks**: Basic checks defined in `.pre-commit-config.yaml`
 - trailing-whitespace
 - end-of-file-fixer
