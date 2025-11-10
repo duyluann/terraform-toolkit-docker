@@ -6,7 +6,6 @@
         "eamodio.gitlens",
         "streetsidesoftware.code-spell-checker",
         "pkief.material-icon-theme",
-        "equinusocio.vsc-material-theme",
         "ms-azuretools.vscode-docker"
     ]
 }
