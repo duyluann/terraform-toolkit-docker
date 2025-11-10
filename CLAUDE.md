@@ -112,16 +112,48 @@ pre-commit run trailing-whitespace --all-files
 
 ## Image Size Optimizations
 
-The Dockerfile has been optimized to minimize image size:
+The Dockerfile uses a multi-stage build to minimize image size while maintaining full tool compatibility:
 
-1. **Combined RUN layers**: Tool installations are grouped into fewer RUN commands to reduce layers (from 10+ to 5 layers)
-2. **--no-install-recommends**: APT packages installed without recommended packages to save space
-3. **--no-cache-dir**: Python pip installations don't cache downloaded packages (saves ~100MB+)
-4. **Removed sudo**: The sudo package was removed as it's not needed (~40MB saved)
-5. **Single apt-get layer**: User creation and package installation combined into one layer
-6. **Quiet downloads**: Using `-q` flags on wget/unzip to reduce build log verbosity
-7. **Stream extraction**: eksctl uses piped extraction to avoid temporary files
-8. **Cleaned extraction**: tar commands extract only specific binaries, not entire archives
+### Current Optimizations (Optimized: 1.61 GB, Original: 2.21 GB - 27% reduction)
+
+1. **Multi-stage build**: Alpine builder stage downloads all binaries, Ubuntu runtime stage provides compatibility
+2. **Alpine builder**: Uses Alpine 3.20 (7MB) for downloading binaries (wget, curl, unzip)
+3. **Ubuntu runtime**: Uses Ubuntu 22.04 with --no-install-recommends for minimal dependencies
+4. **Combined RUN layers**: Tool installations grouped into fewer RUN commands (10+ reduced to 6 layers)
+5. **--no-install-recommends**: APT packages installed without recommended packages to save space
+6. **--no-cache-dir**: Python pip installations don't cache downloaded packages (saves ~100MB+)
+7. **Removed sudo**: The sudo package was removed as it's not needed (~40MB saved)
+8. **Python cleanup**: Removes __pycache__, .pyc files, and test directories after pip install
+9. **Minimal runtime deps**: Only git, python3, python3-pip, curl, unzip, bash in final image
+10. **AWS CLI in runtime**: AWS CLI installed in Ubuntu stage for full compatibility
+
+### Size Breakdown by Component
+
+| Component | Size | Notes |
+|-----------|------|-------|
+| Checkov (Python) | ~236 MB | Infrastructure security scanning |
+| AWS CLI | ~231 MB | AWS command line interface |
+| Trivy | ~148 MB | Container security scanner |
+| eksctl | ~136 MB | Kubernetes cluster management |
+| System packages | ~100 MB | Minimal: git, Python, bash, curl, unzip |
+| Terraform | 87 MB | Core tool |
+| Terragrunt | 67 MB | Terraform wrapper |
+| TFLint | 47 MB | Terraform linter |
+| TFSec | 46 MB | Terraform security scanner |
+| terraform-docs | 16 MB | Documentation generator |
+
+### Build Process
+
+```bash
+# Build optimized image with all tools
+docker build -t terraform-toolkit:latest .
+
+# The multi-stage build:
+# 1. Alpine stage downloads all static binaries
+# 2. Ubuntu stage installs AWS CLI and Python packages
+# 3. Binaries copied from builder to runtime
+# Result: Full functionality at 1.61 GB (27% smaller than 2.21 GB original)
+```
 
 ## Security
 
