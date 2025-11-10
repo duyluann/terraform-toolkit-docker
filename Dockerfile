@@ -1,132 +1,123 @@
-FROM ubuntu:22.04
+# Build stage - download and prepare binaries
+FROM alpine:3.20 AS builder
 
 # Set ARGs for tool versions
 ARG TERRAFORM_VERSION=1.13.5
 ARG TERRAGRUNT_VERSION=0.93.3
-ARG CHECKOV_VERSION=3.2.491
 ARG TFDOCS_VERSION=0.20.0
 ARG TFLINT_VERSION=0.59.1
 ARG TFSEC_VERSION=1.28.14
 ARG TRIVY_VERSION=0.67.2
 ARG EKSCTL_VERSION=0.216.0
-ARG PRE_COMMIT_VERSION=4.4.0
 
-# Install necessary dependencies
-RUN apt-get update -y && \
-    apt-get install -y \
-    git \
-    unzip \
-    wget \
-    curl \
-    python3 \
-    python3-pip && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install build dependencies
+RUN apk add --no-cache wget curl tar gzip unzip
+
+# Create directory for binaries
+RUN mkdir -p /tmp/bin
+
+# Set ARCH for downloads
+RUN case $(uname -m) in \
+      x86_64) echo "amd64" > /tmp/arch ;; \
+      aarch64) echo "arm64" > /tmp/arch ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac
+
+# Download Terraform
+RUN ARCH=$(cat /tmp/arch) && \
+    wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip && \
+    unzip -q terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip -d /tmp/bin/ && \
+    rm terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip
+
+# Download Terragrunt
+RUN ARCH=$(cat /tmp/arch) && \
+    wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${ARCH} -O /tmp/bin/terragrunt && \
+    chmod +x /tmp/bin/terragrunt
+
+# Download Terraform Docs
+RUN ARCH=$(cat /tmp/arch) && \
+    wget -q https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz && \
+    tar -xzf terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz -C /tmp/bin terraform-docs && \
+    rm terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz
+
+# Download TFLint
+RUN ARCH=$(cat /tmp/arch) && \
+    wget -q https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${ARCH}.zip && \
+    unzip -q tflint_linux_${ARCH}.zip -d /tmp/bin/ && \
+    rm tflint_linux_${ARCH}.zip
+
+# Download TFsec
+RUN ARCH=$(cat /tmp/arch) && \
+    wget -q https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-${ARCH} -O /tmp/bin/tfsec && \
+    chmod +x /tmp/bin/tfsec
+
+# Download Trivy
+RUN case $(uname -m) in \
+      x86_64) ARCH=64bit ;; \
+      aarch64) ARCH=ARM64 ;; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac && \
+    wget -q https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz && \
+    tar -xzf trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz -C /tmp/bin trivy && \
+    rm trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz
+
+# Download eksctl
+RUN ARCH=$(cat /tmp/arch) && \
+    PLATFORM=Linux_${ARCH} && \
+    wget -q https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_VERSION}/eksctl_${PLATFORM}.tar.gz && \
+    tar -xzf eksctl_${PLATFORM}.tar.gz -C /tmp/bin && \
+    rm eksctl_${PLATFORM}.tar.gz
+
+# Final stage - Ubuntu runtime image for full compatibility
+FROM ubuntu:22.04
+
+# Version args for Python packages
+ARG CHECKOV_VERSION=3.2.491
+ARG PRE_COMMIT_VERSION=4.4.0
 
 # Add a non-root user
 ARG USERNAME=tf-user
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && apt-get update \
-    && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
-
-# Install Terraform
-RUN case $(uname -m) in \
-      x86_64) ARCH=amd64 ;; \
-      aarch64) ARCH=arm64 ;; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac && \
-    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip \
-    && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip -d /usr/local/bin/ \
-    && rm terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip
-
-# Install Terragrunt
-RUN case $(uname -m) in \
-      x86_64) ARCH=amd64 ;; \
-      aarch64) ARCH=arm64 ;; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac && \
-    wget https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${ARCH} -O /usr/local/bin/terragrunt \
-    && chmod +x /usr/local/bin/terragrunt
-
-# Install Terraform Docs
-RUN case $(uname -m) in \
-      x86_64) ARCH=amd64 ;; \
-      aarch64) ARCH=arm64 ;; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac && \
-    wget https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz \
-    && tar -xzf terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz \
-    && mv terraform-docs /usr/local/bin/ \
-    && rm terraform-docs-v${TFDOCS_VERSION}-linux-${ARCH}.tar.gz
-
-# Install TFLint
-RUN case $(uname -m) in \
-      x86_64) ARCH=amd64 ;; \
-      aarch64) ARCH=arm64 ;; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac && \
-    wget https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${ARCH}.zip \
-    && unzip tflint_linux_${ARCH}.zip \
-    && mv tflint /usr/local/bin/ \
-    && rm tflint_linux_${ARCH}.zip
-
-# Install TFsec
-RUN case $(uname -m) in \
-      x86_64) ARCH=amd64 ;; \
-      aarch64) ARCH=arm64 ;; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac && \
-    wget https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-${ARCH} \
-    && mv tfsec-linux-${ARCH} /usr/local/bin/tfsec \
-    && chmod +x /usr/local/bin/tfsec
-
-# Install Trivy
-RUN case $(uname -m) in \
-      x86_64) ARCH=64bit ;; \
-      aarch64) ARCH=ARM64 ;; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac && \
-    wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz \
-    && tar zxvf trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz \
-    && mv trivy /usr/local/bin/ \
-    && rm trivy_${TRIVY_VERSION}_Linux-${ARCH}.tar.gz
-
-# Install Checkov
-RUN pip3 install checkov==${CHECKOV_VERSION} && \
+# Install runtime dependencies only
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+    git \
+    python3 \
+    python3-pip \
+    ca-certificates \
+    bash \
+    curl \
+    unzip && \
+    groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install AWS CLI
+# Copy binaries from builder stage
+COPY --from=builder /tmp/bin/* /usr/local/bin/
+
+# Install AWS CLI v2 in final stage
 RUN case $(uname -m) in \
       x86_64) ARCH=x86_64 ;; \
       aarch64) ARCH=aarch64 ;; \
       *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
+    curl -s "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip" && \
+    unzip -q awscliv2.zip && \
     ./aws/install && \
     rm -rf awscliv2.zip aws
 
-# Install eksctl
-RUN case $(uname -m) in \
-      x86_64) ARCH=amd64 ;; \
-      aarch64) ARCH=arm64 ;; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac && \
-    PLATFORM=Linux_$ARCH && \
-    curl -sLO "https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_VERSION}/eksctl_${PLATFORM}.tar.gz" && \
-    tar -xzf eksctl_${PLATFORM}.tar.gz -C /tmp && \
-    rm eksctl_${PLATFORM}.tar.gz && \
-    mv /tmp/eksctl /usr/local/bin/
-
-# Install pre-commit (specific version)
-RUN pip3 install pre-commit==${PRE_COMMIT_VERSION}
+# Install Python packages with optimization
+RUN pip3 install --no-cache-dir \
+    checkov==${CHECKOV_VERSION} \
+    pre-commit==${PRE_COMMIT_VERSION} && \
+    # Remove Python cache and test files
+    find /usr/lib/python* -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true && \
+    find /usr/lib/python* -name '*.pyc' -delete 2>/dev/null || true && \
+    find /usr/lib/python* -name 'tests' -type d -exec rm -rf {} + 2>/dev/null || true && \
+    find /usr/lib/python* -name 'test' -type d -exec rm -rf {} + 2>/dev/null || true
 
 # Switch to non-root user
 USER $USERNAME
@@ -139,9 +130,9 @@ RUN terraform --version && \
     tflint --version && \
     tfsec --version && \
     trivy --version && \
+    pre-commit --version && \
     aws --version && \
-    eksctl version && \
-    pre-commit --version
+    eksctl version
 
 # Set default user working directory
 WORKDIR /home/$USERNAME
