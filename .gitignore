@@ -93,3 +93,7 @@ gitleaks-report.txt
 *.swo
 *~.nib
 .lock-wscript
+
+# Local development
+workspace/
+.terragrunt-cache/

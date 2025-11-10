@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  terraform-toolkit:
+    image: terraform-toolkit:local
+    container_name: terraform-toolkit-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Mount your workspace directory
+      - ./workspace:/workspace
+      # Mount AWS credentials (optional)
+      - ~/.aws:/home/tf-user/.aws:ro
+      # Mount SSH keys (optional, for git operations)
+      - ~/.ssh:/home/tf-user/.ssh:ro
+      # Mount git config (optional)
+      - ~/.gitconfig:/home/tf-user/.gitconfig:ro
+    working_dir: /workspace
+    environment:
+      # AWS configuration (customize as needed)
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_PROFILE=${AWS_PROFILE:-default}
+      # Terraform configuration
+      - TF_LOG=${TF_LOG:-}
+      - TF_LOG_PATH=${TF_LOG_PATH:-}
+      - TF_CLI_ARGS=${TF_CLI_ARGS:-}
+      # Terragrunt configuration
+      - TERRAGRUNT_LOG_LEVEL=${TERRAGRUNT_LOG_LEVEL:-info}
+      - TERRAGRUNT_DOWNLOAD=${TERRAGRUNT_DOWNLOAD:-.terragrunt-cache}
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    networks:
+      - terraform-net
+
+  # Optional: Separate service for running security scans
+  security-scan:
+    image: terraform-toolkit:local
+    container_name: terraform-security-scan
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./workspace:/workspace
+    working_dir: /workspace
+    profiles:
+      - security
+    command: bash -c "checkov -d . && tfsec . && trivy fs ."
+    networks:
+      - terraform-net
+
+  # Optional: Service for running TFLint
+  tflint:
+    image: terraform-toolkit:local
+    container_name: terraform-tflint
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./workspace:/workspace
+    working_dir: /workspace
+    profiles:
+      - lint
+    command: bash -c "tflint --init && tflint"
+    networks:
+      - terraform-net
+
+networks:
+  terraform-net:
+    driver: bridge
+
+# Example usage:
+#
+# 1. Start interactive shell:
+#    docker-compose up -d terraform-toolkit
+#    docker-compose exec terraform-toolkit bash
+#
+# 2. Run Terraform commands:
+#    docker-compose run --rm terraform-toolkit terraform init
+#    docker-compose run --rm terraform-toolkit terraform plan
+#
+# 3. Run security scans:
+#    docker-compose --profile security run --rm security-scan
+#
+# 4. Run linting:
+#    docker-compose --profile lint run --rm tflint
+#
+# 5. Run Terragrunt:
+#    docker-compose run --rm terraform-toolkit terragrunt run-all plan
+#
+# 6. Clean up:
+#    docker-compose down -v
