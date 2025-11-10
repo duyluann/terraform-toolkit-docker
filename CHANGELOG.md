@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.62.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.61.0...v1.62.0) (2025-11-10)
+
+
+### Features
+
+* Optimize Docker image size and reduce layers ([#165](https://github.com/duyluann/terraform-toolkit-docker/issues/165)) ([12d3a2c](https://github.com/duyluann/terraform-toolkit-docker/commit/12d3a2ca2daccba352e853dd5ab25bd7c57cb3fa))
+* Update tool versions ([#164](https://github.com/duyluann/terraform-toolkit-docker/issues/164)) ([220b84c](https://github.com/duyluann/terraform-toolkit-docker/commit/220b84cf0eaabe430db49b3246382e49743a3449))
+
 # [1.61.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.60.0...v1.61.0) (2025-11-10)
 
 
