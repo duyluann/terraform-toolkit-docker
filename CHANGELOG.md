@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.63.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.63.0...v1.63.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* **ci:** Trigger Docker build on release published event ([#169](https://github.com/duyluann/terraform-toolkit-docker/issues/169)) ([94b30a3](https://github.com/duyluann/terraform-toolkit-docker/commit/94b30a3a177bc6e96c5d96717570e8cb1afd4a1e))
+* **release:** Add missing package and optimize ARM64 builds ([#170](https://github.com/duyluann/terraform-toolkit-docker/issues/170)) ([a78b734](https://github.com/duyluann/terraform-toolkit-docker/commit/a78b734cee2f7e618677b40779c692c8cf1d9cd9))
+
 # [1.63.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.62.0...v1.63.0) (2025-11-11)
 
 
