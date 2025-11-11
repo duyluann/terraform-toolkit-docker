@@ -37,18 +37,18 @@ jobs:
           # Pull latest changes (semantic-release just pushed)
           git pull origin main
 
-          # Get current release body
-          CURRENT_BODY=$(gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" --jq '.body')
+          # Get current release body and export for envsubst
+          export CURRENT_BODY=$(gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" --jq '.body')
 
-          # Extract tool versions from Dockerfile
-          TERRAFORM_VERSION=$(grep '^ARG TERRAFORM_VERSION=' Dockerfile | cut -d '=' -f2)
-          TERRAGRUNT_VERSION=$(grep '^ARG TERRAGRUNT_VERSION=' Dockerfile | cut -d '=' -f2)
-          CHECKOV_VERSION=$(grep '^ARG CHECKOV_VERSION=' Dockerfile | cut -d '=' -f2)
-          TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
-          TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
-          TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
-          AWS_CLI_VERSION=$(grep '^ARG AWS_CLI_VERSION=' Dockerfile | cut -d '=' -f2 || echo "2.x")
-          EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
+          # Extract tool versions from Dockerfile and export for envsubst
+          export TERRAFORM_VERSION=$(grep '^ARG TERRAFORM_VERSION=' Dockerfile | cut -d '=' -f2)
+          export TERRAGRUNT_VERSION=$(grep '^ARG TERRAGRUNT_VERSION=' Dockerfile | cut -d '=' -f2)
+          export CHECKOV_VERSION=$(grep '^ARG CHECKOV_VERSION=' Dockerfile | cut -d '=' -f2)
+          export TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
+          export TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
+          export TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
+          export AWS_CLI_VERSION=$(grep '^ARG AWS_CLI_VERSION=' Dockerfile | cut -d '=' -f2 || echo "2.x")
+          export EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
 
           # Create enhanced release body
           cat > release_body.md << 'EOF'
