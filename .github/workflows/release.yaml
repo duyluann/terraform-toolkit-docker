@@ -38,7 +38,7 @@ jobs:
           git pull origin main
 
           # Get current release body and export for envsubst
-          export CURRENT_BODY=$(gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" --jq '.body')
+          export CURRENT_BODY=$(gh release view "v${RELEASE_VERSION}" --json body --jq '.body')
 
           # Extract tool versions from Dockerfile and export for envsubst
           export TERRAFORM_VERSION=$(grep '^ARG TERRAFORM_VERSION=' Dockerfile | cut -d '=' -f2)
@@ -47,8 +47,9 @@ jobs:
           export TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
           export TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
           export TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
-          export AWS_CLI_VERSION=$(grep '^ARG AWS_CLI_VERSION=' Dockerfile | cut -d '=' -f2 || echo "2.x")
+          export TFDOCS_VERSION=$(grep '^ARG TFDOCS_VERSION=' Dockerfile | cut -d '=' -f2)
           export EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
+          export PRE_COMMIT_VERSION=$(grep '^ARG PRE_COMMIT_VERSION=' Dockerfile | cut -d '=' -f2)
 
           # Create enhanced release body
           cat > release_body.md << 'EOF'
@@ -72,8 +73,10 @@ jobs:
           | TFLint | ${TFLINT_VERSION} |
           | TFSec | ${TFSEC_VERSION} |
           | Trivy | ${TRIVY_VERSION} |
-          | AWS CLI | ${AWS_CLI_VERSION} |
+          | terraform-docs | ${TFDOCS_VERSION} |
           | eksctl | ${EKSCTL_VERSION} |
+          | pre-commit | ${PRE_COMMIT_VERSION} |
+          | AWS CLI | 2.x (latest) |
 
           ## 🚀 Quick Start
 
@@ -95,6 +98,4 @@ jobs:
           envsubst < release_body.md > release_body_final.md
 
           # Update release
-          gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" \
-            --method PATCH \
-            --field body=@release_body_final.md
+          gh release edit "v${RELEASE_VERSION}" --notes-file release_body_final.md
