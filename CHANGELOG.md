@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.63.4](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.63.3...v1.63.4) (2025-11-11)
+
+
+### Bug Fixes
+
+* **ci:** Remove duplicate Docker image tags ([#173](https://github.com/duyluann/terraform-toolkit-docker/issues/173)) ([7ec4e63](https://github.com/duyluann/terraform-toolkit-docker/commit/7ec4e63aa50eafc2d40368b70358a98d4fa29ad9))
+
 ## [1.63.3](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.63.2...v1.63.3) (2025-11-11)
 
 
