@@ -47,8 +47,9 @@ jobs:
           export TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
           export TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
           export TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
-          export AWS_CLI_VERSION=$(grep '^ARG AWS_CLI_VERSION=' Dockerfile | cut -d '=' -f2 || echo "2.x")
+          export TFDOCS_VERSION=$(grep '^ARG TFDOCS_VERSION=' Dockerfile | cut -d '=' -f2)
           export EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
+          export PRE_COMMIT_VERSION=$(grep '^ARG PRE_COMMIT_VERSION=' Dockerfile | cut -d '=' -f2)
 
           # Create enhanced release body
           cat > release_body.md << 'EOF'
@@ -72,8 +73,10 @@ jobs:
           | TFLint | ${TFLINT_VERSION} |
           | TFSec | ${TFSEC_VERSION} |
           | Trivy | ${TRIVY_VERSION} |
-          | AWS CLI | ${AWS_CLI_VERSION} |
+          | terraform-docs | ${TFDOCS_VERSION} |
           | eksctl | ${EKSCTL_VERSION} |
+          | pre-commit | ${PRE_COMMIT_VERSION} |
+          | AWS CLI | 2.x (latest) |
 
           ## 🚀 Quick Start
 
