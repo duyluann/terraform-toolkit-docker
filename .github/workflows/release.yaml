@@ -17,6 +17,7 @@ jobs:
           fetch-depth: 0
 
       - name: Release
+        id: semantic
         uses: cycjimmy/semantic-release-action@v5
         with:
           semantic_version: 18.0.0
@@ -25,3 +26,74 @@ jobs:
             @semantic-release/git@10.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Enhance Release Notes
+        if: steps.semantic.outputs.new_release_published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          RELEASE_VERSION: ${{ steps.semantic.outputs.new_release_version }}
+        run: |
+          # Pull latest changes (semantic-release just pushed)
+          git pull origin main
+
+          # Get current release body
+          CURRENT_BODY=$(gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" --jq '.body')
+
+          # Extract tool versions from Dockerfile
+          TERRAFORM_VERSION=$(grep '^ARG TERRAFORM_VERSION=' Dockerfile | cut -d '=' -f2)
+          TERRAGRUNT_VERSION=$(grep '^ARG TERRAGRUNT_VERSION=' Dockerfile | cut -d '=' -f2)
+          CHECKOV_VERSION=$(grep '^ARG CHECKOV_VERSION=' Dockerfile | cut -d '=' -f2)
+          TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
+          TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
+          TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
+          AWS_CLI_VERSION=$(grep '^ARG AWS_CLI_VERSION=' Dockerfile | cut -d '=' -f2 || echo "2.x")
+          EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
+
+          # Create enhanced release body
+          cat > release_body.md << 'EOF'
+          ${CURRENT_BODY}
+
+          ## 🐳 Docker Images
+
+          Pull this release:
+          ```bash
+          docker pull duyluann/terraform-toolkit:${RELEASE_VERSION}
+          docker pull duyluann/terraform-toolkit:latest
+          ```
+
+          ## 📦 Tool Versions
+
+          | Tool | Version |
+          |------|---------|
+          | Terraform | ${TERRAFORM_VERSION} |
+          | Terragrunt | ${TERRAGRUNT_VERSION} |
+          | Checkov | ${CHECKOV_VERSION} |
+          | TFLint | ${TFLINT_VERSION} |
+          | TFSec | ${TFSEC_VERSION} |
+          | Trivy | ${TRIVY_VERSION} |
+          | AWS CLI | ${AWS_CLI_VERSION} |
+          | eksctl | ${EKSCTL_VERSION} |
+
+          ## 🚀 Quick Start
+
+          ```bash
+          # Run Terraform
+          docker run -v $(pwd):/workspace -w /workspace duyluann/terraform-toolkit:${RELEASE_VERSION} terraform init
+
+          # Run Terragrunt
+          docker run -v $(pwd):/workspace -w /workspace duyluann/terraform-toolkit:${RELEASE_VERSION} terragrunt plan
+
+          # Security scan with Checkov
+          docker run -v $(pwd):/workspace -w /workspace duyluann/terraform-toolkit:${RELEASE_VERSION} checkov -d .
+          ```
+
+          See the [Dockerfile](https://github.com/duyluann/terraform-toolkit-docker/blob/v${RELEASE_VERSION}/Dockerfile) for complete tool list and versions.
+          EOF
+
+          # Substitute environment variables
+          eval "cat <<< \"$(cat release_body.md)\"" > release_body_final.md
+
+          # Update release
+          gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" \
+            --method PATCH \
+            --field body=@release_body_final.md
