@@ -91,8 +91,8 @@ jobs:
           See the [Dockerfile](https://github.com/duyluann/terraform-toolkit-docker/blob/v${RELEASE_VERSION}/Dockerfile) for complete tool list and versions.
           EOF
 
-          # Substitute environment variables
-          eval "cat <<< \"$(cat release_body.md)\"" > release_body_final.md
+          # Substitute environment variables safely using envsubst
+          envsubst < release_body.md > release_body_final.md
 
           # Update release
           gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" \
