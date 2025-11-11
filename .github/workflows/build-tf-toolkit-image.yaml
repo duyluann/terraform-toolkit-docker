@@ -37,7 +37,6 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
             type=ref,event=branch
-            type=ref,event=tag
             type=semver,pattern={{version}}
           flavor: |
             latest=true
@@ -106,7 +105,6 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
             type=ref,event=branch
-            type=ref,event=tag
             type=semver,pattern={{version}}
           flavor: |
             latest=true
