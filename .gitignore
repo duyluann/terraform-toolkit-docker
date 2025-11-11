@@ -93,3 +93,8 @@ gitleaks-report.txt
 *.swo
 *~.nib
 .lock-wscript
+
+# Test scripts and outputs
+test_release_notes.sh
+release_body.md
+release_body_final.md
