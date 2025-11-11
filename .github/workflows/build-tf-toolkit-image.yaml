@@ -2,12 +2,11 @@ name: Build Terraform Toolkit Image
 
 on:
   push:
-    tags:
-      - 'v*'
     branches:
       - main
+  release:
+    types: [published]
   workflow_dispatch:
-  workflow_call:
 
 env:
   REGISTRY_IMAGE: duyluann/terraform-toolkit
