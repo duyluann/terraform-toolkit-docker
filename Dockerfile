@@ -81,7 +81,9 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Install runtime dependencies only
-RUN apt-get update -y && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update -y && \
     apt-get install -y --no-install-recommends \
     git \
     python3 \
@@ -91,26 +93,30 @@ RUN apt-get update -y && \
     curl \
     unzip && \
     groupadd --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 # Copy binaries from builder stage
 COPY --from=builder /tmp/bin/* /usr/local/bin/
 
-# Install AWS CLI v2 in final stage
-RUN case $(uname -m) in \
+# Install AWS CLI v2 in final stage with download cache
+RUN --mount=type=cache,target=/tmp/awscli-cache,sharing=locked \
+    case $(uname -m) in \
       x86_64) ARCH=x86_64 ;; \
       aarch64) ARCH=aarch64 ;; \
       *) echo "unsupported architecture"; exit 1 ;; \
     esac && \
-    curl -s "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip" && \
+    CACHE_FILE="/tmp/awscli-cache/awscliv2-${ARCH}.zip" && \
+    if [ ! -f "${CACHE_FILE}" ]; then \
+      curl -s "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "${CACHE_FILE}"; \
+    fi && \
+    cp "${CACHE_FILE}" awscliv2.zip && \
     unzip -q awscliv2.zip && \
     ./aws/install && \
     rm -rf awscliv2.zip aws
 
-# Install Python packages with optimization
-RUN pip3 install --no-cache-dir \
+# Install Python packages with cache mount for faster builds
+RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
+    pip3 install --prefer-binary \
     checkov==${CHECKOV_VERSION} \
     pre-commit==${PRE_COMMIT_VERSION} && \
     # Remove Python cache and test files
