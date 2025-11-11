@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.63.3](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.63.2...v1.63.3) (2025-11-11)
+
+
+### Bug Fixes
+
+* **release:** Export variables for envsubst to properly substitute ([#172](https://github.com/duyluann/terraform-toolkit-docker/issues/172)) ([3a979fd](https://github.com/duyluann/terraform-toolkit-docker/commit/3a979fd2c2a98c3b1efac6785f9202d92004ed9b))
+
 ## [1.63.2](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.63.1...v1.63.2) (2025-11-11)
 
 
