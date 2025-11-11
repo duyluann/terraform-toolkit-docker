@@ -38,7 +38,7 @@ jobs:
           git pull origin main
 
           # Get current release body and export for envsubst
-          export CURRENT_BODY=$(gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" --jq '.body')
+          export CURRENT_BODY=$(gh release view "v${RELEASE_VERSION}" --json body --jq '.body')
 
           # Extract tool versions from Dockerfile and export for envsubst
           export TERRAFORM_VERSION=$(grep '^ARG TERRAFORM_VERSION=' Dockerfile | cut -d '=' -f2)
@@ -95,6 +95,4 @@ jobs:
           envsubst < release_body.md > release_body_final.md
 
           # Update release
-          gh api "/repos/${{ github.repository }}/releases/tags/v${RELEASE_VERSION}" \
-            --method PATCH \
-            --field body=@release_body_final.md
+          gh release edit "v${RELEASE_VERSION}" --notes-file release_body_final.md
