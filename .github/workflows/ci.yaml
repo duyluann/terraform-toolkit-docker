@@ -98,6 +98,7 @@ jobs:
     name: CodeQL Analysis
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/codeql.yaml
+    secrets: inherit
     permissions:
       security-events: write
       actions: read
@@ -106,6 +107,7 @@ jobs:
   security-trivy:
     name: Trivy Security Scan
     uses: ./.github/workflows/trivy-scan.yaml
+    secrets: inherit
     permissions:
       security-events: write
       contents: read
@@ -114,6 +116,7 @@ jobs:
     name: Dependency Review
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/deps-review.yaml
+    secrets: inherit
 
   test-terraform-configs:
     name: Test Terraform Configurations
