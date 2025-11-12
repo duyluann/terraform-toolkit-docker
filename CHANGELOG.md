@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.66.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.3...v1.66.0) (2025-11-12)
+
+
+### Features
+
+* Update tool versions ([#184](https://github.com/duyluann/terraform-toolkit-docker/issues/184)) ([b6e81b0](https://github.com/duyluann/terraform-toolkit-docker/commit/b6e81b00863bb75a4d2efbe5e591afc2df62a6cc))
+
+
+### Maintenance
+
+* **deps:** bump actions/download-artifact from 4 to 6 ([#181](https://github.com/duyluann/terraform-toolkit-docker/issues/181)) ([3e338a5](https://github.com/duyluann/terraform-toolkit-docker/commit/3e338a59bbabca2476b2b623269a27909c9a4e1d))
+* **deps:** bump actions/upload-artifact from 4 to 5 ([#183](https://github.com/duyluann/terraform-toolkit-docker/issues/183)) ([3487d9e](https://github.com/duyluann/terraform-toolkit-docker/commit/3487d9e0f88a9ffe293b3dafe69dd3b7dd87b881))
+* **deps:** bump hadolint/hadolint-action from 3.1.0 to 3.3.0 ([#182](https://github.com/duyluann/terraform-toolkit-docker/issues/182)) ([d2c7f5e](https://github.com/duyluann/terraform-toolkit-docker/commit/d2c7f5e697f1df797539dfb260873c71e44fe46f))
+
 ## [1.65.3](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.2...v1.65.3) (2025-11-12)
 
 
