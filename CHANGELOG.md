@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.65.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.0...v1.65.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* Add conditional checks to check-tool-updates workflow ([#179](https://github.com/duyluann/terraform-toolkit-docker/issues/179)) ([d4f6e1a](https://github.com/duyluann/terraform-toolkit-docker/commit/d4f6e1af10fd07c4ad92bf97643d9b6def086f34))
+
+
+### Maintenance
+
+* Update ci.yaml ([4fec949](https://github.com/duyluann/terraform-toolkit-docker/commit/4fec9498418a0d25091595769cb4f8f403b2af47))
+
 ## [1.65.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.64.0...v1.65.0) (2025-11-12)
 
 
