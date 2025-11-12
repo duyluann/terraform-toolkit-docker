@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.65.2](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.1...v1.65.2) (2025-11-12)
+
+
+### Bug Fixes
+
+* Resolve TFLint unused variable warnings in test configuration ([#178](https://github.com/duyluann/terraform-toolkit-docker/issues/178)) ([a8e715f](https://github.com/duyluann/terraform-toolkit-docker/commit/a8e715f12f51a0b4a8977e833f227490ef281813))
+
 ## [1.65.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.0...v1.65.1) (2025-11-12)
 
 
