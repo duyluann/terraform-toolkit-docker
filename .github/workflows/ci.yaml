@@ -145,7 +145,7 @@ jobs:
           echo "| Dependency Review | ${{ needs.dependency-review.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Terraform Configs | ${{ needs.test-terraform-configs.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Build PR Image | ${{ needs.build-pr-image.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Test Image | ${{ needs.test-image.result }} |" >> $GITHUB
+          echo "| Test Image | ${{ needs.test-image.result }} |" >> $GITHUB_STEP_SUMMARY
 
       - name: Determine Overall Status
         run: |
