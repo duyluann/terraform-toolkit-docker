@@ -20,6 +20,9 @@ jobs:
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/lint-pr.yaml
     secrets: inherit
+    permissions:
+      pull-requests: write
+      statuses: read
 
   pre-commit:
     name: Pre-commit Checks
@@ -147,11 +150,7 @@ jobs:
       - pre-commit
       - dockerfile-lint
     if: |
-      github.event_name == 'pull_request' &&
-      (
-        contains(github.event.pull_request.changed_files, 'Dockerfile') ||
-        contains(github.event.pull_request.changed_files, 'test/')
-      )
+      github.event_name == 'pull_request'
     uses: ./.github/workflows/test-image.yaml
     with:
       image_tag: latest
@@ -160,7 +159,6 @@ jobs:
     name: CI Summary
     runs-on: ubuntu-24.04
     needs:
-      - lint-pr
       - pre-commit
       - dockerfile-lint
       - yaml-lint
@@ -178,7 +176,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| PR Title Lint | ${{ needs.lint-pr.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Pre-commit | ${{ needs.pre-commit.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Dockerfile Lint | ${{ needs.dockerfile-lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| YAML Lint | ${{ needs.yaml-lint.result }} |" >> $GITHUB_STEP_SUMMARY
@@ -202,8 +199,7 @@ jobs:
           fi
 
           # Check optional jobs (only if they ran)
-          if [ "${{ needs.lint-pr.result }}" == "failure" ] || \
-             [ "${{ needs.security-codeql.result }}" == "failure" ] || \
+          if [ "${{ needs.security-codeql.result }}" == "failure" ] || \
              [ "${{ needs.dependency-review.result }}" == "failure" ]; then
             echo "❌ CI checks failed"
             exit 1
