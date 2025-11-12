@@ -109,7 +109,13 @@ jobs:
 
   security-trivy:
     name: Trivy Security Scan
+    needs:
+      - build-pr-image
+    if: |
+      github.event_name == 'pull_request'
     uses: ./.github/workflows/trivy-scan.yaml
+    with:
+      image_tag: ${{ needs.build-pr-image.outputs.image_tag }}
     secrets: inherit
     permissions:
       security-events: write
