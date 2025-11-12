@@ -1,0 +1,362 @@
+name: Test Terraform Toolkit Image
+
+on:
+  pull_request:
+    paths:
+      - 'Dockerfile'
+      - 'test/**'
+      - '.github/workflows/test-image.yaml'
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag to test'
+        required: false
+        default: 'latest'
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Docker image tag to test'
+        required: false
+        default: 'latest'
+        type: string
+
+env:
+  DOCKER_IMAGE: duyluann/terraform-toolkit
+
+jobs:
+  test-versions:
+    name: Test Tool Versions
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Determine Image Tag
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Docker Image
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }}
+
+      - name: Test Terraform Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} terraform version
+
+      - name: Test Terragrunt Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} terragrunt --version
+
+      - name: Test Checkov Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} checkov --version
+
+      - name: Test TFLint Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} tflint --version
+
+      - name: Test TFSec Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} tfsec --version
+
+      - name: Test Trivy Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} trivy --version
+
+      - name: Test terraform-docs Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} terraform-docs --version
+
+      - name: Test eksctl Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} eksctl version
+
+      - name: Test AWS CLI Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} aws --version
+
+      - name: Test pre-commit Version
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} pre-commit --version
+
+  test-terraform-workflow:
+    name: Test Terraform Workflow
+    runs-on: ubuntu-24.04
+    needs: test-versions
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Determine Image Tag
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Docker Image
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }}
+
+      - name: Create Output Directory
+        run: mkdir -p test/output
+
+      - name: Terraform Init
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            terraform init
+
+      - name: Terraform Validate
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            terraform validate
+
+      - name: Terraform Format Check
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            terraform fmt -check -recursive
+
+      - name: Terraform Plan
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            terraform plan -out=tfplan
+
+  test-linting:
+    name: Test Linting Tools
+    runs-on: ubuntu-24.04
+    needs: test-versions
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Determine Image Tag
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Docker Image
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }}
+
+      - name: Terraform Init (for TFLint)
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            terraform init
+
+      - name: TFLint Init
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            tflint --init
+
+      - name: Run TFLint
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            tflint
+
+  test-security:
+    name: Test Security Scanning
+    runs-on: ubuntu-24.04
+    needs: test-versions
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Determine Image Tag
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Docker Image
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }}
+
+      - name: Run TFSec
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            tfsec . --no-color || true
+
+      - name: Run Checkov
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            checkov -d . --compact || true
+
+      - name: Run Trivy Filesystem Scan
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            trivy fs . --exit-code 0
+
+  test-documentation:
+    name: Test Documentation Generation
+    runs-on: ubuntu-24.04
+    needs: test-versions
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Determine Image Tag
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Docker Image
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }}
+
+      - name: Generate terraform-docs
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            terraform-docs markdown table . > DOCS_OUTPUT.md
+
+      - name: Verify Documentation Generated
+        working-directory: test
+        run: |
+          if [ ! -s DOCS_OUTPUT.md ]; then
+            echo "Error: Documentation was not generated"
+            exit 1
+          fi
+          echo "Documentation generated successfully"
+          head -20 DOCS_OUTPUT.md
+
+  test-terragrunt:
+    name: Test Terragrunt
+    runs-on: ubuntu-24.04
+    needs: test-versions
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Determine Image Tag
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Docker Image
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }}
+
+      - name: Create Output Directory
+        run: mkdir -p test/output
+
+      - name: Terragrunt Plan
+        working-directory: test
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
+            terragrunt plan
+
+  summary:
+    name: Test Summary
+    runs-on: ubuntu-24.04
+    needs:
+      - test-versions
+      - test-terraform-workflow
+      - test-linting
+      - test-security
+      - test-documentation
+      - test-terragrunt
+    if: always()
+    steps:
+      - name: Check Test Results
+        run: |
+          echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool Versions | ${{ needs.test-versions.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Terraform Workflow | ${{ needs.test-terraform-workflow.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linting Tools | ${{ needs.test-linting.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Scanning | ${{ needs.test-security.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Documentation | ${{ needs.test-documentation.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Terragrunt | ${{ needs.test-terragrunt.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Determine Overall Status
+        run: |
+          if [ "${{ needs.test-versions.result }}" != "success" ] || \
+             [ "${{ needs.test-terraform-workflow.result }}" != "success" ] || \
+             [ "${{ needs.test-linting.result }}" != "success" ] || \
+             [ "${{ needs.test-security.result }}" != "success" ] || \
+             [ "${{ needs.test-documentation.result }}" != "success" ] || \
+             [ "${{ needs.test-terragrunt.result }}" != "success" ]; then
+            echo "❌ Some tests failed"
+            exit 1
+          else
+            echo "✅ All tests passed"
+          fi
