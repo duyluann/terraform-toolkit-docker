@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.65.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.64.0...v1.65.0) (2025-11-12)
+
+
+### Features
+
+* **ci:** Add comprehensive test suite and CI integration ([#177](https://github.com/duyluann/terraform-toolkit-docker/issues/177)) ([22fa704](https://github.com/duyluann/terraform-toolkit-docker/commit/22fa704f08f0457d8ab96560c1b0d709746eb5b4))
+
 ## [1.64.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.63.4...v1.64.0) (2025-11-11)
 
 
