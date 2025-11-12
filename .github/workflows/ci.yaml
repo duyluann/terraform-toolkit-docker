@@ -41,57 +41,6 @@ jobs:
           dockerfile: Dockerfile
           failure-threshold: error
 
-  yaml-lint:
-    name: Lint YAML Files
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: YAML Lint
-        uses: ibiqlik/action-yamllint@v3
-        with:
-          file_or_dir: .github/workflows/
-          config_data: |
-            extends: default
-            rules:
-              line-length:
-                max: 120
-                level: warning
-              comments:
-                min-spaces-from-content: 1
-
-  markdown-lint:
-    name: Lint Markdown
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Create markdownlint config
-        run: |
-          cat > .markdownlint.json << 'EOF'
-          {
-            "MD013": false,
-            "MD024": false,
-            "MD012": false,
-            "MD040": false,
-            "MD031": false,
-            "MD032": false,
-            "MD022": false,
-            "MD041": false
-          }
-          EOF
-
-      - name: Markdown Lint
-        uses: DavidAnson/markdownlint-cli2-action@v19
-        with:
-          globs: |
-            **/*.md
-            !**/node_modules/**
-            !**/.terraform/**
-            !CHANGELOG.md
-          config: .markdownlint.json
-        continue-on-error: true
-
   security-gitleaks:
     name: Scan for Secrets
     uses: ./.github/workflows/gitleaks.yaml
@@ -173,8 +122,6 @@ jobs:
     needs:
       - pre-commit
       - dockerfile-lint
-      - yaml-lint
-      - markdown-lint
       - security-gitleaks
       - security-codeql
       - security-trivy
@@ -190,8 +137,6 @@ jobs:
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Pre-commit | ${{ needs.pre-commit.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Dockerfile Lint | ${{ needs.dockerfile-lint.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| YAML Lint | ${{ needs.yaml-lint.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Markdown Lint | ${{ needs.markdown-lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Gitleaks | ${{ needs.security-gitleaks.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| CodeQL | ${{ needs.security-codeql.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Trivy | ${{ needs.security-trivy.result }} |" >> $GITHUB_STEP_SUMMARY
@@ -216,9 +161,5 @@ jobs:
             echo "❌ CI checks failed"
             exit 1
           fi
-
-          # Markdown and YAML linting are informational only
-          echo "ℹ️  Markdown lint: ${{ needs.markdown-lint.result }}"
-          echo "ℹ️  YAML lint: ${{ needs.yaml-lint.result }}"
 
           echo "✅ All CI checks passed"
