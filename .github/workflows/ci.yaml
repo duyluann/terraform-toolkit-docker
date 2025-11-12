@@ -144,16 +144,25 @@ jobs:
         working-directory: test
         run: terraform validate
 
-  test-image:
-    name: Test Docker Image
+  build-pr-image:
+    name: Build PR Image
     needs:
       - pre-commit
       - dockerfile-lint
     if: |
       github.event_name == 'pull_request'
+    uses: ./.github/workflows/build-pr-image.yaml
+    secrets: inherit
+
+  test-image:
+    name: Test Docker Image
+    needs:
+      - build-pr-image
+    if: |
+      github.event_name == 'pull_request'
     uses: ./.github/workflows/test-image.yaml
     with:
-      image_tag: pr-test
+      image_tag: ${{ needs.build-pr-image.outputs.image_tag }}
 
   ci-summary:
     name: CI Summary
