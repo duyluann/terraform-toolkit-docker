@@ -9,17 +9,16 @@ on:
       - main
   workflow_dispatch:
 
-# permissions:
-#   contents: read
-#   pull-requests: read
-#   security-events: write
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
 
 jobs:
   lint-pr:
     name: Lint PR Title
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/lint-pr.yaml
-    secrets: inherit
     permissions:
       pull-requests: write
       statuses: write
@@ -27,7 +26,6 @@ jobs:
   pre-commit:
     name: Pre-commit Checks
     uses: ./.github/workflows/pre-commit-ci.yaml
-    secrets: inherit
 
   dockerfile-lint:
     name: Lint Dockerfile
@@ -95,13 +93,11 @@ jobs:
   security-gitleaks:
     name: Scan for Secrets
     uses: ./.github/workflows/gitleaks.yaml
-    secrets: inherit
 
   security-codeql:
     name: CodeQL Analysis
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/codeql.yaml
-    secrets: inherit
     permissions:
       security-events: write
       actions: read
@@ -116,13 +112,11 @@ jobs:
     uses: ./.github/workflows/trivy-scan.yaml
     with:
       image_tag: ${{ needs.build-pr-image.outputs.image_tag }}
-    secrets: inherit
 
   dependency-review:
     name: Dependency Review
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/deps-review.yaml
-    secrets: inherit
 
   test-terraform-configs:
     name: Test Terraform Configurations
@@ -155,7 +149,6 @@ jobs:
     if: |
       github.event_name == 'pull_request'
     uses: ./.github/workflows/build-pr-image.yaml
-    secrets: inherit
 
   test-image:
     name: Test Docker Image
