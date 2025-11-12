@@ -1,0 +1,34 @@
+# Trivy Ignore File
+# This file contains CVEs that are acknowledged but cannot be immediately fixed
+# These are typically in embedded Go stdlib within pre-compiled binaries
+
+# Go stdlib vulnerabilities in Terraform, Terragrunt, TFLint, TFSec, Trivy, eksctl
+# These require upstream projects to rebuild with newer Go versions
+# Tracking issues:
+# - Terraform: https://github.com/hashicorp/terraform/releases
+# - Terragrunt: https://github.com/gruntwork-io/terragrunt/releases
+# - TFLint: https://github.com/terraform-linters/tflint/releases
+# - TFSec: https://github.com/aquasecurity/tfsec/releases
+# - Trivy: https://github.com/aquasecurity/trivy/releases
+# - eksctl: https://github.com/eksctl-io/eksctl/releases
+
+# Go stdlib CVEs - Will be resolved when upstream projects rebuild with Go 1.24.9+/1.25.3+
+CVE-2025-47907  # database/sql: Postgres Scan Race Condition
+CVE-2025-58183  # golang: archive/tar: Unbounded allocation when parsing GNU sparse map
+CVE-2025-58186  # golang: net/http: Excessive headers can cause unbounded memory allocation
+CVE-2025-58187  # golang: crypto/x509: Name constraint checking can cause excessive CPU
+CVE-2025-58188  # golang: crypto/x509: DSA public key validation can cause excessive CPU
+CVE-2025-22874  # crypto/x509: Usage of ExtKeyUsageAny disables policy validation
+
+# Dependency CVEs in eksctl and other Go binaries
+CVE-2024-25621  # containerd: requires upstream to update containerd dependency to 1.7.29+/2.0.7+/2.1.5+
+CVE-2025-64329  # containerd: requires upstream to update containerd dependency
+CVE-2025-8959   # github.com/hashicorp/go-getter: Arbitrary File Read - requires Terragrunt update to 1.7.9+
+CVE-2025-46569  # github.com/open-policy-agent/opa: OPA server Data API HTTP path injection
+CVE-2025-58058  # github.com/ulikunitz/xz: memory leak - requires upstream updates
+CVE-2025-22868  # golang.org/x/oauth2/jws: memory consumption during token parsing - requires eksctl update
+CVE-2025-22872  # golang.org/x/net/html: XSS vulnerability - requires Terragrunt update to use golang.org/x/net@0.38.0+
+CVE-2025-52881  # github.com/opencontainers/selinux: container escape and DoS - requires Trivy update to 1.13.0+
+
+# Note: These CVEs will be automatically resolved when the check-tool-updates workflow
+# detects and updates to newer versions of the tools that have been rebuilt with patched dependencies
