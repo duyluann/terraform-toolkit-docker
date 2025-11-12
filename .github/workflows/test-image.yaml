@@ -1,14 +1,6 @@
-name: Test Terraform Toolkit Image
+name: Test Docker Image
 
 on:
-  pull_request:
-    paths:
-      - 'Dockerfile'
-      - 'test/**'
-      - '.github/workflows/test-image.yaml'
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       image_tag:

@@ -1,0 +1,191 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
+
+jobs:
+  lint-pr:
+    name: Lint PR Title
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/lint-pr.yaml
+    secrets: inherit
+
+  pre-commit:
+    name: Pre-commit Checks
+    uses: ./.github/workflows/pre-commit-ci.yaml
+    secrets: inherit
+
+  dockerfile-lint:
+    name: Lint Dockerfile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Lint Dockerfile with Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: warning
+
+  yaml-lint:
+    name: Lint YAML Files
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: YAML Lint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: .github/workflows/
+          config_data: |
+            extends: default
+            rules:
+              line-length:
+                max: 120
+                level: warning
+              comments:
+                min-spaces-from-content: 1
+
+  markdown-lint:
+    name: Lint Markdown
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Markdown Lint
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            **/*.md
+            !**/node_modules/**
+            !**/.terraform/**
+
+  security-gitleaks:
+    name: Scan for Secrets
+    uses: ./.github/workflows/gitleaks.yaml
+    secrets: inherit
+
+  security-codeql:
+    name: CodeQL Analysis
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/codeql.yaml
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+  security-trivy:
+    name: Trivy Security Scan
+    uses: ./.github/workflows/trivy-scan.yaml
+    permissions:
+      security-events: write
+      contents: read
+
+  dependency-review:
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/deps-review.yaml
+
+  test-terraform-configs:
+    name: Test Terraform Configurations
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
+
+      - name: Terraform Format Check
+        working-directory: test
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        working-directory: test
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: test
+        run: terraform validate
+
+  test-image:
+    name: Test Docker Image
+    needs:
+      - pre-commit
+      - dockerfile-lint
+    if: |
+      github.event_name == 'pull_request' &&
+      (
+        contains(github.event.pull_request.changed_files, 'Dockerfile') ||
+        contains(github.event.pull_request.changed_files, 'test/')
+      )
+    uses: ./.github/workflows/test-image.yaml
+    with:
+      image_tag: latest
+
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-24.04
+    needs:
+      - lint-pr
+      - pre-commit
+      - dockerfile-lint
+      - yaml-lint
+      - markdown-lint
+      - security-gitleaks
+      - security-codeql
+      - security-trivy
+      - dependency-review
+      - test-terraform-configs
+    if: always()
+    steps:
+      - name: Check CI Results
+        run: |
+          echo "## CI Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| PR Title Lint | ${{ needs.lint-pr.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Pre-commit | ${{ needs.pre-commit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dockerfile Lint | ${{ needs.dockerfile-lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| YAML Lint | ${{ needs.yaml-lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Markdown Lint | ${{ needs.markdown-lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Gitleaks | ${{ needs.security-gitleaks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| CodeQL | ${{ needs.security-codeql.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trivy | ${{ needs.security-trivy.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Review | ${{ needs.dependency-review.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Terraform Configs | ${{ needs.test-terraform-configs.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Determine Overall Status
+        run: |
+          # Check if any required job failed
+          if [ "${{ needs.pre-commit.result }}" != "success" ] || \
+             [ "${{ needs.dockerfile-lint.result }}" != "success" ] || \
+             [ "${{ needs.security-gitleaks.result }}" != "success" ] || \
+             [ "${{ needs.security-trivy.result }}" != "success" ] || \
+             [ "${{ needs.test-terraform-configs.result }}" != "success" ]; then
+            echo "❌ CI checks failed"
+            exit 1
+          fi
+
+          # Check optional jobs (only if they ran)
+          if [ "${{ needs.lint-pr.result }}" == "failure" ] || \
+             [ "${{ needs.security-codeql.result }}" == "failure" ] || \
+             [ "${{ needs.dependency-review.result }}" == "failure" ]; then
+            echo "❌ CI checks failed"
+            exit 1
+          fi
+
+          echo "✅ All CI checks passed"

@@ -4,6 +4,49 @@ This directory contains GitHub Actions workflows for building, testing, and rele
 
 ## Workflows Overview
 
+### Main CI Workflow (`ci.yaml`)
+
+**Purpose**: Unified continuous integration workflow that orchestrates all quality checks.
+
+**Triggers**:
+- Pull requests to main
+- Push to main branch
+- Manual workflow dispatch
+
+**Jobs**:
+
+1. **lint-pr-title** - Validates PR titles follow conventional commits
+2. **pre-commit** - Runs pre-commit hooks (trailing whitespace, YAML, etc.)
+3. **dockerfile-lint** - Lints Dockerfile with Hadolint
+4. **yaml-lint** - Validates YAML syntax in workflows
+5. **markdown-lint** - Checks markdown files for formatting issues
+6. **security-gitleaks** - Scans for secrets and credentials
+7. **security-codeql** - Static code analysis for security
+8. **security-trivy** - Vulnerability scanning of filesystem
+9. **dependency-review** - Reviews dependency changes on PRs
+10. **test-terraform-configs** - Tests Terraform configurations
+11. **test-image** - Calls test-image workflow (conditional)
+12. **ci-summary** - Generates comprehensive CI summary
+
+**Workflow**:
+```
+PR Created
+    ├─> lint-pr-title
+    ├─> pre-commit
+    ├─> dockerfile-lint
+    ├─> yaml-lint
+    ├─> markdown-lint
+    ├─> security-gitleaks
+    ├─> security-codeql
+    ├─> security-trivy
+    ├─> dependency-review
+    ├─> test-terraform-configs
+    ├─> test-image (if Dockerfile/test changed)
+    └─> ci-summary
+```
+
+## Workflows Overview
+
 ### 1. Build Terraform Toolkit Image (`build-tf-toolkit-image.yaml`)
 
 **Purpose**: Builds multi-architecture Docker images and pushes to Docker Hub.
