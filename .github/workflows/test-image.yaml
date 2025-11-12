@@ -412,6 +412,7 @@ jobs:
           docker run --rm --platform ${{ matrix.platform }} \
             --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
+            -e TRIVY_CACHE_DIR=/workspace/.trivy-cache \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
             trivy fs . --exit-code 0
