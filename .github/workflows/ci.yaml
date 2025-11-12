@@ -117,9 +117,6 @@ jobs:
     with:
       image_tag: ${{ needs.build-pr-image.outputs.image_tag }}
     secrets: inherit
-    permissions:
-      security-events: write
-      contents: read
 
   dependency-review:
     name: Dependency Review
