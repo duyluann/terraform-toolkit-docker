@@ -28,7 +28,6 @@ jobs:
     name: Pre-commit Checks
     uses: ./.github/workflows/pre-commit-ci.yaml
     secrets: inherit
-    secrets: inherit
 
   dockerfile-lint:
     name: Lint Dockerfile
