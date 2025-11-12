@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.65.3](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.2...v1.65.3) (2025-11-12)
+
+
+### Bug Fixes
+
+* Suppress known Go stdlib CVEs in Trivy security scanning ([#180](https://github.com/duyluann/terraform-toolkit-docker/issues/180)) ([be43a6f](https://github.com/duyluann/terraform-toolkit-docker/commit/be43a6fa09e2d8dc3b53d4f1c8327d19ebc338c0))
+
 ## [1.65.2](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.1...v1.65.2) (2025-11-12)
 
 
