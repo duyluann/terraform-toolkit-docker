@@ -61,7 +61,7 @@ jobs:
 
       - name: Download Docker image artifact
         if: steps.image.outputs.load_from_artifact == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: docker-image-${{ steps.image.outputs.tag == 'pr-test-amd64' && 'amd64' || 'arm64' }}
           path: /tmp
@@ -164,7 +164,7 @@ jobs:
 
       - name: Download Docker image artifact
         if: steps.image.outputs.load_from_artifact == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: docker-image-${{ steps.image.outputs.tag == 'pr-test-amd64' && 'amd64' || 'arm64' }}
           path: /tmp
@@ -271,7 +271,7 @@ jobs:
 
       - name: Download Docker image artifact
         if: steps.image.outputs.load_from_artifact == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: docker-image-${{ steps.image.outputs.tag == 'pr-test-amd64' && 'amd64' || 'arm64' }}
           path: /tmp
@@ -365,7 +365,7 @@ jobs:
 
       - name: Download Docker image artifact
         if: steps.image.outputs.load_from_artifact == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: docker-image-${{ steps.image.outputs.tag == 'pr-test-amd64' && 'amd64' || 'arm64' }}
           path: /tmp
@@ -460,7 +460,7 @@ jobs:
 
       - name: Download Docker image artifact
         if: steps.image.outputs.load_from_artifact == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: docker-image-${{ steps.image.outputs.tag == 'pr-test-amd64' && 'amd64' || 'arm64' }}
           path: /tmp
@@ -544,7 +544,7 @@ jobs:
 
       - name: Download Docker image artifact
         if: steps.image.outputs.load_from_artifact == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: docker-image-${{ steps.image.outputs.tag == 'pr-test-amd64' && 'amd64' || 'arm64' }}
           path: /tmp
