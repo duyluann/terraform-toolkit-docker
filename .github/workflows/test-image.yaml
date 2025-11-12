@@ -192,6 +192,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -201,6 +202,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -210,6 +212,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -219,6 +222,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -292,6 +296,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -301,6 +306,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -310,6 +316,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -383,6 +390,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -392,6 +400,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -401,6 +410,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -474,6 +484,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
@@ -560,6 +571,7 @@ jobs:
         working-directory: test
         run: |
           docker run --rm --platform ${{ matrix.platform }} \
+            --user $(id -u):$(id -g) \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
