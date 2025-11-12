@@ -22,7 +22,7 @@ jobs:
     secrets: inherit
     permissions:
       pull-requests: write
-      statuses: read
+      statuses: write
 
   pre-commit:
     name: Pre-commit Checks
