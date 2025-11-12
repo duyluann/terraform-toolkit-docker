@@ -27,7 +27,13 @@ resource "random_string" "test" {
 
 # Local file for testing
 resource "local_file" "test_output" {
-  content  = "Test file created by terraform-toolkit\nRandom value: ${random_string.test.result}"
+  content  = <<-EOT
+    Test file created by terraform-toolkit
+    Environment: ${var.environment}
+    Project: ${var.project_name}
+    Random value: ${random_string.test.result}
+    Tags: ${jsonencode(var.tags)}
+  EOT
   filename = "${path.module}/output/test-${random_string.test.result}.txt"
 }
 
