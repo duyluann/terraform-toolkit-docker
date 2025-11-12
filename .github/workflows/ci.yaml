@@ -127,6 +127,8 @@ jobs:
       - security-trivy
       - dependency-review
       - test-terraform-configs
+      - build-pr-image
+      - test-image
     if: always()
     steps:
       - name: Check CI Results
@@ -142,6 +144,8 @@ jobs:
           echo "| Trivy | ${{ needs.security-trivy.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Dependency Review | ${{ needs.dependency-review.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Terraform Configs | ${{ needs.test-terraform-configs.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build PR Image | ${{ needs.build-pr-image.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Image | ${{ needs.test-image.result }} |" >> $GITHUB
 
       - name: Determine Overall Status
         run: |
@@ -150,7 +154,9 @@ jobs:
              [ "${{ needs.dockerfile-lint.result }}" != "success" ] || \
              [ "${{ needs.security-gitleaks.result }}" != "success" ] || \
              [ "${{ needs.security-trivy.result }}" != "success" ] || \
-             [ "${{ needs.test-terraform-configs.result }}" != "success" ]; then
+             [ "${{ needs.test-terraform-configs.result }}" != "success" ] || \
+             [ "${{ needs.build-pr-image.result }}" != "success" ] || \
+             [ "${{ needs.test-image.result }}" != "success" ]; then
             echo "❌ CI checks failed"
             exit 1
           fi
