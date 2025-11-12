@@ -120,11 +120,13 @@ jobs:
           body: ${{ env.PR_BODY }}
 
       - name: Auto approve
+        if: steps.check_changes.outputs.changes == 'true'
         run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Enable Pull Request Automerge
+        if: steps.check_changes.outputs.changes == 'true'
         run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
