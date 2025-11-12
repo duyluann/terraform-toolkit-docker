@@ -1,6 +1,6 @@
 name: Pre-commit CI
 on:
-  pull_request_target:
+  workflow_call:
 
 jobs:
   pre-commit:

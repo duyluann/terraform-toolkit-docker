@@ -1,0 +1,171 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
+
+jobs:
+  lint-pr:
+    name: Lint PR Title
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/lint-pr.yaml
+    secrets: inherit
+    permissions:
+      pull-requests: write
+      statuses: write
+
+  pre-commit:
+    name: Pre-commit Checks
+    uses: ./.github/workflows/pre-commit-ci.yaml
+    secrets: inherit
+
+  dockerfile-lint:
+    name: Lint Dockerfile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Lint Dockerfile with Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error
+
+  security-gitleaks:
+    name: Scan for Secrets
+    uses: ./.github/workflows/gitleaks.yaml
+    secrets: inherit
+
+  security-codeql:
+    name: CodeQL Analysis
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/codeql.yaml
+    secrets: inherit
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+  security-trivy:
+    name: Trivy Security Scan
+    needs:
+      - build-pr-image
+    if: |
+      github.event_name == 'pull_request'
+    uses: ./.github/workflows/trivy-scan.yaml
+    secrets: inherit
+    with:
+      image_tag: ${{ needs.build-pr-image.outputs.image_tag }}
+
+  dependency-review:
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/deps-review.yaml
+    secrets: inherit
+
+  test-terraform-configs:
+    name: Test Terraform Configurations
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
+
+      - name: Terraform Format Check
+        working-directory: test
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        working-directory: test
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: test
+        run: terraform validate
+
+  build-pr-image:
+    name: Build PR Image
+    needs:
+      - pre-commit
+      - dockerfile-lint
+    if: |
+      github.event_name == 'pull_request'
+    uses: ./.github/workflows/build-pr-image.yaml
+    secrets: inherit
+
+  test-image:
+    name: Test Docker Image
+    needs:
+      - build-pr-image
+    if: |
+      github.event_name == 'pull_request'
+    uses: ./.github/workflows/test-image.yaml
+    with:
+      image_tag: ${{ needs.build-pr-image.outputs.image_tag }}
+
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-24.04
+    needs:
+      - pre-commit
+      - dockerfile-lint
+      - security-gitleaks
+      - security-codeql
+      - security-trivy
+      - dependency-review
+      - test-terraform-configs
+      - build-pr-image
+      - test-image
+    if: always()
+    steps:
+      - name: Check CI Results
+        run: |
+          echo "## CI Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Pre-commit | ${{ needs.pre-commit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dockerfile Lint | ${{ needs.dockerfile-lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Gitleaks | ${{ needs.security-gitleaks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| CodeQL | ${{ needs.security-codeql.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trivy | ${{ needs.security-trivy.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Review | ${{ needs.dependency-review.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Terraform Configs | ${{ needs.test-terraform-configs.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build PR Image | ${{ needs.build-pr-image.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Image | ${{ needs.test-image.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Determine Overall Status
+        run: |
+          # Check if any required job failed
+          if [ "${{ needs.pre-commit.result }}" != "success" ] || \
+             [ "${{ needs.dockerfile-lint.result }}" != "success" ] || \
+             [ "${{ needs.security-gitleaks.result }}" != "success" ] || \
+             [ "${{ needs.security-trivy.result }}" != "success" ] || \
+             [ "${{ needs.test-terraform-configs.result }}" != "success" ] || \
+             [ "${{ needs.build-pr-image.result }}" != "success" ] || \
+             [ "${{ needs.test-image.result }}" != "success" ]; then
+            echo "❌ CI checks failed"
+            exit 1
+          fi
+
+          # Check optional jobs (only if they ran)
+          if [ "${{ needs.security-codeql.result }}" == "failure" ] || \
+             [ "${{ needs.dependency-review.result }}" == "failure" ]; then
+            echo "❌ CI checks failed"
+            exit 1
+          fi
+
+          echo "✅ All CI checks passed"

@@ -1,6 +1,8 @@
 # 🛠️ Terraform Toolkit Docker Image
 
-[![Build Terraform Toolkit Image](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml)
+[![CI](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/ci.yaml)
+[![Build](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml)
+[![Test](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/test-image.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/test-image.yaml)
 
 This repository provides a Docker image for a comprehensive Terraform toolkit. It bundles essential Terraform-related tools such as Terraform, Terragrunt, Checkov, TFSec, TFDoc, and TFLint to streamline infrastructure management, security checks, and linting.
 
@@ -62,16 +64,59 @@ This command mounts your current working directory (pwd) into the container’s 
 This repository includes several GitHub Actions workflows to automate testing, dependency updates, and release processes.
 
 - 🔨 Build and Test: The build-tf-toolkit-image.yaml workflow builds and tests the Docker image automatically.
+- 🧪 Image Testing: The test-image.yaml workflow runs comprehensive tests on all tools in the image.
 - 🔄 Dependency Checks: The check-tool-updates.yaml and deps-review.yaml workflows handle automatic updates and reviews of dependencies.
-- 📦 Release Automation: The create-release.yaml workflow automates creating new releases when updates are ready.
+- 📦 Release Automation: The release.yaml workflow automates creating new releases with semantic versioning.
 - 🔍 Pre-commit Checks: The pre-commit-auto-update.yaml ensures that pre-commit hooks and lints are consistently maintained.
+
+For detailed information about CI/CD workflows, see [.github/workflows/README.md](.github/workflows/README.md).
+
+### 🧪 Testing
+
+This repository includes a comprehensive test suite to validate all tools in the Docker image.
+
+#### Quick Start
+
+```bash
+# Navigate to test directory
+cd test
+
+# Test all tool versions
+make test-versions
+
+# Run full test suite
+make test
+
+# Run Terraform workflow
+make init validate plan
+
+# Run security scans
+make security
+```
+
+#### Test Coverage
+
+- ✅ **Tool Versions** - Verify all 10 tools are installed and accessible
+- ✅ **Terraform Workflow** - Test init, validate, fmt, plan, apply, destroy
+- ✅ **Code Quality** - TFLint checks and formatting validation
+- ✅ **Security Scanning** - TFSec, Checkov, and Trivy scans
+- ✅ **Documentation** - terraform-docs generation
+- ✅ **Terragrunt** - Terragrunt workflow testing
+
+For detailed testing instructions, see:
+- [TEST_GUIDE.md](TEST_GUIDE.md) - Comprehensive testing guide
+- [test/README.md](test/README.md) - Test suite documentation
 
 ### 🗂️ Project Structure
 ```bash
 ├── .editorconfig                 # Editor configuration for consistent coding styles
 ├── .github/                      # GitHub workflows for CI/CD automation
 │   ├── ISSUE_TEMPLATE/           # Templates for GitHub issues
-│   ├── workflows/                # CI/CD pipelines (build, release, etc.)
+│   ├── workflows/                # CI/CD pipelines (build, test, release)
+│   │   ├── build-tf-toolkit-image.yaml  # Multi-arch Docker build
+│   │   ├── test-image.yaml       # Image testing workflow
+│   │   ├── release.yaml          # Semantic release automation
+│   │   └── README.md             # Workflow documentation
 │   ├── dependabot.yml            # Automatic dependency updates
 │   └── pull_request_template.md  # Template for pull requests
 ├── .gitignore                    # Files and directories to ignore in Git
@@ -80,7 +125,15 @@ This repository includes several GitHub Actions workflows to automate testing, d
 ├── CODEOWNERS                    # File to manage repository code owners
 ├── Dockerfile                    # Dockerfile to build the image with the tools
 ├── LICENSE                       # License for the project
-└── README.md                     # Documentation (you're reading this!)
+├── README.md                     # Documentation (you're reading this!)
+├── TEST_GUIDE.md                 # Comprehensive testing guide
+└── test/                         # Test suite for Docker image
+    ├── main.tf                   # Sample Terraform configuration
+    ├── variables.tf              # Variable definitions
+    ├── terragrunt.hcl           # Terragrunt configuration
+    ├── Makefile                  # Test automation commands
+    ├── test-toolkit.sh          # Comprehensive test script
+    └── README.md                 # Test documentation
 ```
 
 ### 🤝 Contributing

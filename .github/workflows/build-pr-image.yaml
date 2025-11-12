@@ -1,0 +1,68 @@
+name: Build PR Image
+
+on:
+  workflow_call:
+    outputs:
+      image_tag:
+        description: 'Tag of the built image'
+        value: ${{ jobs.build.outputs.image_tag }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-24.04
+    outputs:
+      image_tag: ${{ steps.set_tag.outputs.tag }}
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: [amd64, arm64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set image tag
+        id: set_tag
+        run: echo "tag=pr-test" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ matrix.architecture }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ matrix.architecture }}-
+
+      - name: Build Docker image
+        run: |
+          docker buildx build --platform linux/${{ matrix.architecture }} \
+            -t duyluann/terraform-toolkit:pr-test-${{ matrix.architecture }} \
+            --load \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            .
+
+      - name: Save Docker image to tar
+        run: |
+          docker save duyluann/terraform-toolkit:pr-test-${{ matrix.architecture }} | gzip > /tmp/image-${{ matrix.architecture }}.tar.gz
+
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image-${{ matrix.architecture }}
+          path: /tmp/image-${{ matrix.architecture }}.tar.gz
+          retention-days: 1
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache

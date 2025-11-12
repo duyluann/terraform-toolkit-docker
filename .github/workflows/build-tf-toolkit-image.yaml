@@ -124,3 +124,11 @@ jobs:
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+
+  test:
+    name: Test Built Image
+    needs:
+      - merge
+    uses: ./.github/workflows/test-image.yaml
+    with:
+      image_tag: latest
