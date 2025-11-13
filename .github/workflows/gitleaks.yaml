@@ -16,16 +16,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Gitleaks (SARIF)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-        with:
-          args: --verbose --redact --report-path=gitleaks-results.sarif --report-format=sarif
-
-      - name: Run Gitleaks (JSON)
-        if: always()
+      - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,22 +24,10 @@ jobs:
         with:
           args: --verbose --redact --report-path=gitleaks-results.json --report-format=json
 
-      - name: Run Gitleaks (CSV)
-        if: always()
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-        with:
-          args: --verbose --redact --report-path=gitleaks-results.csv --report-format=csv
-
       - name: Upload Gitleaks results artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gitleaks-results
-          path: |
-            gitleaks-results.sarif
-            gitleaks-results.json
-            gitleaks-results.csv
+          path: gitleaks-results.json
           retention-days: 30

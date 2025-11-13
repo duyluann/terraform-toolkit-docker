@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Lint Dockerfile with Hadolint (JSON)
+      - name: Lint Dockerfile with Hadolint
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: Dockerfile
@@ -41,31 +41,12 @@ jobs:
           output-file: hadolint-results.json
           failure-threshold: error
 
-      - name: Lint Dockerfile with Hadolint (SARIF)
-        uses: hadolint/hadolint-action@v3.3.0
-        with:
-          dockerfile: Dockerfile
-          format: sarif
-          output-file: hadolint-results.sarif
-          failure-threshold: error
-
-      - name: Lint Dockerfile with Hadolint (Text)
-        uses: hadolint/hadolint-action@v3.3.0
-        with:
-          dockerfile: Dockerfile
-          format: tty
-          output-file: hadolint-results.txt
-          failure-threshold: error
-
       - name: Upload Hadolint results artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: hadolint-results
-          path: |
-            hadolint-results.json
-            hadolint-results.sarif
-            hadolint-results.txt
+          path: hadolint-results.json
           retention-days: 7
 
   security-gitleaks:
