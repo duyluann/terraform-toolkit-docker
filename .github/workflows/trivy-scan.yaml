@@ -80,7 +80,7 @@ jobs:
             --cache-from type=local,src=/tmp/.buildx-cache \
             --cache-to type=local,dest=/tmp/.buildx-cache,mode=max .
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner (SARIF)
         uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: ${{ steps.tag.outputs.image_ref }}
@@ -91,7 +91,40 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivyignores: '.trivyignore'
 
+      - name: Run Trivy vulnerability scanner (Table)
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ steps.tag.outputs.image_ref }}
+          format: 'table'
+          output: 'trivy-results-${{ matrix.architecture }}.txt'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
+
+      - name: Run Trivy vulnerability scanner (JSON)
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ steps.tag.outputs.image_ref }}
+          format: 'json'
+          output: 'trivy-results-${{ matrix.architecture }}.json'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
+
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results-${{ matrix.architecture }}.sarif'
+
+      - name: Upload Trivy scan artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-container-scan-${{ matrix.architecture }}
+          path: |
+            trivy-results-${{ matrix.architecture }}.sarif
+            trivy-results-${{ matrix.architecture }}.txt
+            trivy-results-${{ matrix.architecture }}.json
+          retention-days: 30
