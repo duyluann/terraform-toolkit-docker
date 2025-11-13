@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.68.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.67.0...v1.68.0) (2025-11-13)
+
+
+### Features
+
+* Add artifact uploads for test results in test-image workflow ([#187](https://github.com/duyluann/terraform-toolkit-docker/issues/187)) ([aa642a1](https://github.com/duyluann/terraform-toolkit-docker/commit/aa642a1c840f488baa1036ab28ec502390684f47))
+
 ## [1.67.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.66.0...v1.67.0) (2025-11-13)
 
 
