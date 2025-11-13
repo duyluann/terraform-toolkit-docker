@@ -125,6 +125,11 @@ jobs:
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
 
+      - name: Wait for image propagation
+        run: |
+          echo "Waiting for Docker Hub to propagate multi-arch manifest..."
+          sleep 120
+
   test:
     name: Test Built Image
     needs:
