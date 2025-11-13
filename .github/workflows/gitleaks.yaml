@@ -42,7 +42,7 @@ jobs:
 
       - name: Upload Gitleaks results artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: gitleaks-results
           path: gitleaks-results.json
