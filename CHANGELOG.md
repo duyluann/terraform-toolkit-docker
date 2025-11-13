@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.68.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.68.0...v1.68.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* Add delay after manifest push to ensure image propagation ([33db450](https://github.com/duyluann/terraform-toolkit-docker/commit/33db450c515c0aa8cd3133a0c2155bfa829a00ff))
+
 ## [1.68.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.67.0...v1.68.0) (2025-11-13)
 
 
