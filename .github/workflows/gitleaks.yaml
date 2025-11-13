@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  security-events: write
 
 jobs:
   gitleaks:
@@ -16,10 +17,33 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      - name: Run Gitleaks (JSON)
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ghcr.io/gitleaks/gitleaks:latest \
+            detect --source=/workspace --verbose --redact --report-path=/workspace/gitleaks-results.json --report-format=json --exit-code=0
+
+      - name: Run Gitleaks (SARIF)
+        if: always()
+        run: |
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ghcr.io/gitleaks/gitleaks:latest \
+            detect --source=/workspace --verbose --redact --report-path=/workspace/gitleaks-results.sarif --report-format=sarif --exit-code=0
+
+      - name: Upload Gitleaks SARIF to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
         with:
-          args: --verbose --redact
+          sarif_file: gitleaks-results.sarif
+
+      - name: Upload Gitleaks results artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-results
+          path: gitleaks-results.json
+          retention-days: 30

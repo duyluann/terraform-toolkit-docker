@@ -37,7 +37,17 @@ jobs:
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: Dockerfile
+          format: json
+          output-file: hadolint-results.json
           failure-threshold: error
+
+      - name: Upload Hadolint results artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hadolint-results
+          path: hadolint-results.json
+          retention-days: 7
 
   security-gitleaks:
     name: Scan for Secrets

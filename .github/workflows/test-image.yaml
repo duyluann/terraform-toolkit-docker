@@ -226,7 +226,15 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
-            terraform plan -out=tfplan
+            terraform plan -out=tfplan -json | tee terraform-plan-${{ env.PLATFORM_PAIR }}.json
+
+      - name: Upload Terraform Plan Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-${{ env.PLATFORM_PAIR }}
+          path: test/terraform-plan-${{ env.PLATFORM_PAIR }}.json
+          retention-days: 7
 
   test-linting:
     name: Test Linting Tools
@@ -320,7 +328,15 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
-            tflint
+            tflint --format=json | tee tflint-${{ env.PLATFORM_PAIR }}.json
+
+      - name: Upload TFLint Results Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tflint-results-${{ env.PLATFORM_PAIR }}
+          path: test/tflint-${{ env.PLATFORM_PAIR }}.json
+          retention-days: 7
 
   test-security:
     name: Test Security Scanning
@@ -394,7 +410,7 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
-            tfsec . --no-color || true
+            tfsec . --format=json | tee tfsec-${{ env.PLATFORM_PAIR }}.json || true
 
       - name: Run Checkov
         working-directory: test
@@ -404,7 +420,7 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
-            checkov -d . --compact || true
+            checkov -d . --output=json | tee checkov-${{ env.PLATFORM_PAIR }}.json || true
 
       - name: Run Trivy Filesystem Scan
         working-directory: test
@@ -415,7 +431,18 @@ jobs:
             -e TRIVY_CACHE_DIR=/workspace/.trivy-cache \
             -w /workspace \
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
-            trivy fs . --exit-code 0
+            trivy fs . --exit-code 0 --format=json | tee trivy-${{ env.PLATFORM_PAIR }}.json
+
+      - name: Upload Security Scan Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results-${{ env.PLATFORM_PAIR }}
+          path: |
+            test/tfsec-${{ env.PLATFORM_PAIR }}.json
+            test/checkov-${{ env.PLATFORM_PAIR }}.json
+            test/trivy-${{ env.PLATFORM_PAIR }}.json
+          retention-days: 7
 
   test-documentation:
     name: Test Documentation Generation
@@ -500,6 +527,14 @@ jobs:
           fi
           echo "Documentation generated successfully"
           head -20 DOCS_OUTPUT.md
+
+      - name: Upload terraform-docs Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-docs-${{ env.PLATFORM_PAIR }}
+          path: test/DOCS_OUTPUT.md
+          retention-days: 7
 
   test-terragrunt:
     name: Test Terragrunt
