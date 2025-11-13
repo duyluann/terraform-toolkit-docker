@@ -230,7 +230,7 @@ jobs:
 
       - name: Upload Terraform Plan Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: terraform-plan-${{ env.PLATFORM_PAIR }}
           path: test/terraform-plan-${{ env.PLATFORM_PAIR }}.json
@@ -332,7 +332,7 @@ jobs:
 
       - name: Upload TFLint Results Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: tflint-results-${{ env.PLATFORM_PAIR }}
           path: test/tflint-${{ env.PLATFORM_PAIR }}.json
@@ -435,7 +435,7 @@ jobs:
 
       - name: Upload Security Scan Artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: security-scan-results-${{ env.PLATFORM_PAIR }}
           path: |
@@ -530,7 +530,7 @@ jobs:
 
       - name: Upload terraform-docs Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: terraform-docs-${{ env.PLATFORM_PAIR }}
           path: test/DOCS_OUTPUT.md
