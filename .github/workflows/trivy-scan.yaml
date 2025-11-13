@@ -112,7 +112,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-container-scan-${{ matrix.architecture }}
-          path: |
-            trivy-results-${{ matrix.architecture }}.json
-            trivy-results-${{ matrix.architecture }}.sarif
+          path: trivy-results-${{ matrix.architecture }}.json
           retention-days: 30
