@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.67.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.66.0...v1.67.0) (2025-11-13)
+
+
+### Features
+
+* Update tool versions ([#186](https://github.com/duyluann/terraform-toolkit-docker/issues/186)) ([6b5689d](https://github.com/duyluann/terraform-toolkit-docker/commit/6b5689d70b9621f7b657a6b67b346e6060f0c254))
+
+
+### Bug Fixes
+
+* Configure pre-commit workflow to accept WORKFLOW_TOKEN as input ([#185](https://github.com/duyluann/terraform-toolkit-docker/issues/185)) ([689d62d](https://github.com/duyluann/terraform-toolkit-docker/commit/689d62d522c1f63484f81762e80df91163679564))
+
 ## [1.66.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.65.3...v1.66.0) (2025-11-12)
 
 
