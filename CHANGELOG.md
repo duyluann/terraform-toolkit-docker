@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.69.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.69.0...v1.69.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* Add authentication and validation to version fetching workflow ([#192](https://github.com/duyluann/terraform-toolkit-docker/issues/192)) ([64498fb](https://github.com/duyluann/terraform-toolkit-docker/commit/64498fbff9f543b1939afa55530efa1bfdd433c5))
+
 ## [1.69.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.68.1...v1.69.0) (2025-11-17)
 
 
