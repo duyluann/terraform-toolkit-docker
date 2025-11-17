@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
   # Schedule the workflow to run every Monday at 00:00 UTC
   schedule:
@@ -27,6 +30,8 @@ jobs:
       # Check and update tool versions
       - name: Update Terraform Tools Versions
         id: update_versions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Fetch the current versions from Dockerfile
           CURRENT_TERRAFORM_VERSION=$(grep '^ARG TERRAFORM_VERSION=' Dockerfile | cut -d '=' -f2)
@@ -39,16 +44,43 @@ jobs:
           CURRENT_EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_PRE_COMMIT_VERSION=$(grep '^ARG PRE_COMMIT_VERSION=' Dockerfile | cut -d '=' -f2)
 
-          # Fetch the latest versions using curl and jq, with error handling
-          LATEST_TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_TERRAGRUNT_VERSION=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_CHECKOV_VERSION=$(curl -s https://api.github.com/repos/bridgecrewio/checkov/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_TFDOCS_VERSION=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_TFLINT_VERSION=$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_TFSEC_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_TRIVY_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/trivy/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_EKSCTL_VERSION=$(curl -s https://api.github.com/repos/eksctl-io/eksctl/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
-          LATEST_PRE_COMMIT_VERSION=$(curl -s https://api.github.com/repos/pre-commit/pre-commit/releases/latest | jq -r .tag_name | sed 's/^v//' || echo "error")
+          # Helper function to fetch version with authentication and validation
+          fetch_version() {
+            local repo=$1
+            local version=$(curl -s -H "Authorization: token $GH_TOKEN" \
+              "https://api.github.com/repos/$repo/releases/latest" | \
+              jq -r '.tag_name // "error"' | sed 's/^v//')
+
+            # Validate that we got a real version (not null, empty, or error)
+            if [ -z "$version" ] || [ "$version" = "null" ] || [ "$version" = "error" ]; then
+              echo "error"
+            else
+              echo "$version"
+            fi
+          }
+
+          # Fetch the latest versions using authenticated API calls
+          LATEST_TERRAFORM_VERSION=$(fetch_version "hashicorp/terraform")
+          LATEST_TERRAGRUNT_VERSION=$(fetch_version "gruntwork-io/terragrunt")
+          LATEST_CHECKOV_VERSION=$(fetch_version "bridgecrewio/checkov")
+          LATEST_TFDOCS_VERSION=$(fetch_version "terraform-docs/terraform-docs")
+          LATEST_TFLINT_VERSION=$(fetch_version "terraform-linters/tflint")
+          LATEST_TFSEC_VERSION=$(fetch_version "aquasecurity/tfsec")
+          LATEST_TRIVY_VERSION=$(fetch_version "aquasecurity/trivy")
+          LATEST_EKSCTL_VERSION=$(fetch_version "eksctl-io/eksctl")
+          LATEST_PRE_COMMIT_VERSION=$(fetch_version "pre-commit/pre-commit")
+
+          # Debug output to see what versions were fetched
+          echo "Fetched versions:"
+          echo "Terraform: $LATEST_TERRAFORM_VERSION (current: $CURRENT_TERRAFORM_VERSION)"
+          echo "Terragrunt: $LATEST_TERRAGRUNT_VERSION (current: $CURRENT_TERRAGRUNT_VERSION)"
+          echo "Checkov: $LATEST_CHECKOV_VERSION (current: $CURRENT_CHECKOV_VERSION)"
+          echo "TFDocs: $LATEST_TFDOCS_VERSION (current: $CURRENT_TFDOCS_VERSION)"
+          echo "TFLint: $LATEST_TFLINT_VERSION (current: $CURRENT_TFLINT_VERSION)"
+          echo "TFSec: $LATEST_TFSEC_VERSION (current: $CURRENT_TFSEC_VERSION)"
+          echo "Trivy: $LATEST_TRIVY_VERSION (current: $CURRENT_TRIVY_VERSION)"
+          echo "eksctl: $LATEST_EKSCTL_VERSION (current: $CURRENT_EKSCTL_VERSION)"
+          echo "Pre-commit: $LATEST_PRE_COMMIT_VERSION (current: $CURRENT_PRE_COMMIT_VERSION)"
 
           # Initialize PR body and check if each tool has a version change
           PR_BODY="Updated tool versions:<br>"
