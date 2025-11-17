@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.70.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.69.1...v1.70.0) (2025-11-17)
+
+
+### Features
+
+* Optimize build workflow to trigger on releases only with manual dispatch support ([#193](https://github.com/duyluann/terraform-toolkit-docker/issues/193)) ([0d6a282](https://github.com/duyluann/terraform-toolkit-docker/commit/0d6a282076efbe8e7e65fa6e9b9998465fae9691))
+
 ## [1.69.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.69.0...v1.69.1) (2025-11-17)
 
 
