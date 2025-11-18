@@ -613,6 +613,66 @@ jobs:
             ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
             terragrunt plan
 
+  combine-artifacts:
+    name: Combine Test Artifacts
+    runs-on: ubuntu-24.04
+    needs:
+      - test-terraform-workflow
+      - test-linting
+      - test-security
+      - test-documentation
+    if: always()
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v6
+        with:
+          path: /tmp/test-results
+          pattern: "{terraform-plan,tflint-results,security-scan-results,terraform-docs}-*"
+          merge-multiple: false
+
+      - name: Organize Artifacts
+        run: |
+          mkdir -p /tmp/combined-results/{terraform-plans,linting,security,docs}
+
+          # Move terraform plans
+          if [ -d "/tmp/test-results/terraform-plan-linux-amd64" ]; then
+            cp -r /tmp/test-results/terraform-plan-linux-amd64/* /tmp/combined-results/terraform-plans/ 2>/dev/null || true
+          fi
+          if [ -d "/tmp/test-results/terraform-plan-linux-arm64" ]; then
+            cp -r /tmp/test-results/terraform-plan-linux-arm64/* /tmp/combined-results/terraform-plans/ 2>/dev/null || true
+          fi
+
+          # Move linting results
+          if [ -d "/tmp/test-results/tflint-results-linux-amd64" ]; then
+            cp -r /tmp/test-results/tflint-results-linux-amd64/* /tmp/combined-results/linting/ 2>/dev/null || true
+          fi
+          if [ -d "/tmp/test-results/tflint-results-linux-arm64" ]; then
+            cp -r /tmp/test-results/tflint-results-linux-arm64/* /tmp/combined-results/linting/ 2>/dev/null || true
+          fi
+
+          # Move security scan results
+          if [ -d "/tmp/test-results/security-scan-results-linux-amd64" ]; then
+            cp -r /tmp/test-results/security-scan-results-linux-amd64/* /tmp/combined-results/security/ 2>/dev/null || true
+          fi
+          if [ -d "/tmp/test-results/security-scan-results-linux-arm64" ]; then
+            cp -r /tmp/test-results/security-scan-results-linux-arm64/* /tmp/combined-results/security/ 2>/dev/null || true
+          fi
+
+          # Move documentation
+          if [ -d "/tmp/test-results/terraform-docs-linux-amd64" ]; then
+            cp -r /tmp/test-results/terraform-docs-linux-amd64/* /tmp/combined-results/docs/ 2>/dev/null || true
+          fi
+          if [ -d "/tmp/test-results/terraform-docs-linux-arm64" ]; then
+            cp -r /tmp/test-results/terraform-docs-linux-arm64/* /tmp/combined-results/docs/ 2>/dev/null || true
+          fi
+
+      - name: Upload Combined Test Results
+        uses: actions/upload-artifact@v5
+        with:
+          name: test-results-all-platforms
+          path: /tmp/combined-results/
+          retention-days: 7
+
   summary:
     name: Test Summary
     runs-on: ubuntu-24.04
@@ -623,6 +683,7 @@ jobs:
       - test-security
       - test-documentation
       - test-terragrunt
+      - combine-artifacts
     if: always()
     steps:
       - name: Check Test Results
