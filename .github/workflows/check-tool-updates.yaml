@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
   # Schedule the workflow to run every Monday at 00:00 UTC
   schedule:
@@ -39,7 +36,6 @@ jobs:
           CURRENT_CHECKOV_VERSION=$(grep '^ARG CHECKOV_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_TFDOCS_VERSION=$(grep '^ARG TFDOCS_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
-          CURRENT_TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
           CURRENT_PRE_COMMIT_VERSION=$(grep '^ARG PRE_COMMIT_VERSION=' Dockerfile | cut -d '=' -f2)
@@ -65,7 +61,6 @@ jobs:
           LATEST_CHECKOV_VERSION=$(fetch_version "bridgecrewio/checkov")
           LATEST_TFDOCS_VERSION=$(fetch_version "terraform-docs/terraform-docs")
           LATEST_TFLINT_VERSION=$(fetch_version "terraform-linters/tflint")
-          LATEST_TFSEC_VERSION=$(fetch_version "aquasecurity/tfsec")
           LATEST_TRIVY_VERSION=$(fetch_version "aquasecurity/trivy")
           LATEST_EKSCTL_VERSION=$(fetch_version "eksctl-io/eksctl")
           LATEST_PRE_COMMIT_VERSION=$(fetch_version "pre-commit/pre-commit")
@@ -77,7 +72,6 @@ jobs:
           echo "Checkov: $LATEST_CHECKOV_VERSION (current: $CURRENT_CHECKOV_VERSION)"
           echo "TFDocs: $LATEST_TFDOCS_VERSION (current: $CURRENT_TFDOCS_VERSION)"
           echo "TFLint: $LATEST_TFLINT_VERSION (current: $CURRENT_TFLINT_VERSION)"
-          echo "TFSec: $LATEST_TFSEC_VERSION (current: $CURRENT_TFSEC_VERSION)"
           echo "Trivy: $LATEST_TRIVY_VERSION (current: $CURRENT_TRIVY_VERSION)"
           echo "eksctl: $LATEST_EKSCTL_VERSION (current: $CURRENT_EKSCTL_VERSION)"
           echo "Pre-commit: $LATEST_PRE_COMMIT_VERSION (current: $CURRENT_PRE_COMMIT_VERSION)"
@@ -108,11 +102,6 @@ jobs:
           if [ "$LATEST_TFLINT_VERSION" != "error" ] && [ "$CURRENT_TFLINT_VERSION" != "$LATEST_TFLINT_VERSION" ]; then
             sed -i "s/^ARG TFLINT_VERSION=.*/ARG TFLINT_VERSION=${LATEST_TFLINT_VERSION}/" Dockerfile
             PR_BODY+="- **TFLint**: [See Changelog of $LATEST_TFLINT_VERSION](https://github.com/terraform-linters/tflint/releases/tag/v$LATEST_TFLINT_VERSION)<br>"
-          fi
-
-          if [ "$LATEST_TFSEC_VERSION" != "error" ] && [ "$CURRENT_TFSEC_VERSION" != "$LATEST_TFSEC_VERSION" ]; then
-            sed -i "s/^ARG TFSEC_VERSION=.*/ARG TFSEC_VERSION=${LATEST_TFSEC_VERSION}/" Dockerfile
-            PR_BODY+="- **TFSec**: [See Changelog of $LATEST_TFSEC_VERSION](https://github.com/aquasecurity/tfsec/releases/tag/v$LATEST_TFSEC_VERSION)<br>"
           fi
 
           if [ "$LATEST_TRIVY_VERSION" != "error" ] && [ "$CURRENT_TRIVY_VERSION" != "$LATEST_TRIVY_VERSION" ]; then

@@ -4,7 +4,7 @@
 [![Build](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml)
 [![Test](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/test-image.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/test-image.yaml)
 
-This repository provides a Docker image for a comprehensive Terraform toolkit. It bundles essential Terraform-related tools such as Terraform, Terragrunt, Checkov, TFSec, TFDoc, and TFLint to streamline infrastructure management, security checks, and linting.
+This repository provides a Docker image for a comprehensive Terraform toolkit. It bundles essential Terraform-related tools such as Terraform, Terragrunt, Checkov, TFDoc, TFLint, and Trivy to streamline infrastructure management, security checks, and linting.
 
 ## 🧰 Tools Included
 The Docker image includes the following tools:
@@ -13,8 +13,8 @@ The Docker image includes the following tools:
 - 🚜 [Terragrunt](https://terragrunt.gruntwork.io/): A thin wrapper for Terraform that provides extra tools for keeping your configurations DRY.
 - 🔍 [Checkov](https://www.checkov.io/): Static code analysis tool for infrastructure-as-code to detect cloud misconfigurations.
 - 📄 [terraform-docs](https://terraform-docs.io/): Generate documentation for your Terraform modules in various output formats.
-- 🔐 [TFSec](https://github.com/aquasecurity/tfsec): A security scanner for your Terraform code.
 - 🔧 [TFLint](https://github.com/terraform-linters/tflint): A linter for Terraform code to detect potential errors and enforce best practices.
+- 🛡️ [Trivy](https://trivy.dev/): Comprehensive security scanner for containers and Terraform configurations (replaces deprecated TFSec).
 
 ## 🚀 Getting Started
 
@@ -45,7 +45,6 @@ You can then use the following tools from within the container:
 - terragrunt
 - checkov
 - terraform-docs
-- tfsec
 - tflint
 - trivy
 - eksctl
@@ -96,10 +95,10 @@ make security
 
 #### Test Coverage
 
-- ✅ **Tool Versions** - Verify all 10 tools are installed and accessible
+- ✅ **Tool Versions** - Verify all 9 tools are installed and accessible
 - ✅ **Terraform Workflow** - Test init, validate, fmt, plan, apply, destroy
 - ✅ **Code Quality** - TFLint checks and formatting validation
-- ✅ **Security Scanning** - TFSec, Checkov, and Trivy scans
+- ✅ **Security Scanning** - Checkov and Trivy scans (Trivy replaces deprecated TFSec)
 - ✅ **Documentation** - terraform-docs generation
 - ✅ **Terragrunt** - Terragrunt workflow testing
 

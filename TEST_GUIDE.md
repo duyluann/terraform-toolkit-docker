@@ -71,8 +71,7 @@ make test-versions
 - Terragrunt 0.93.5
 - Checkov 3.2.492
 - TFLint 0.59.1
-- TFSec 1.28.14
-- Trivy 0.67.2
+- Trivy 0.67.2 (replaces deprecated TFSec)
 - terraform-docs 0.20.0
 - eksctl 0.216.0
 - AWS CLI 2.x
@@ -121,7 +120,7 @@ make fmt-check
 ### 4. Security Scanning
 
 ```bash
-# Run TFSec and Checkov
+# Run Trivy and Checkov
 make security
 
 # Run Trivy filesystem scan
@@ -185,7 +184,6 @@ terraform version
 terragrunt --version
 checkov --version
 tflint --version
-tfsec --version
 trivy --version
 terraform-docs --version
 eksctl version
@@ -316,19 +314,16 @@ Rules enabled in `.tflint.hcl`:
 
 ### Security Scanning
 
-**TFSec** checks:
-- Security misconfigurations
-- Best practice violations
-- Resource security issues
+**Trivy** checks:
+- Terraform misconfigurations (replaces TFSec)
+- Security best practices
+- Vulnerabilities
+- Configuration issues
 
 **Checkov** checks:
 - Infrastructure security
 - Compliance standards
 - Policy violations
-
-**Trivy** checks:
-- Vulnerabilities
-- Configuration issues
 - Secret scanning
 
 ## Troubleshooting
@@ -488,7 +483,6 @@ docker run --rm -v $(pwd):/workspace -w /workspace \
 - [Terragrunt Documentation](https://terragrunt.gruntwork.io/)
 - [Checkov Documentation](https://www.checkov.io/)
 - [TFLint Documentation](https://github.com/terraform-linters/tflint)
-- [TFSec Documentation](https://aquasecurity.github.io/tfsec/)
 - [Trivy Documentation](https://aquasecurity.github.io/trivy/)
 
 ## Support

@@ -6,7 +6,6 @@ ARG TERRAFORM_VERSION=1.13.5
 ARG TERRAGRUNT_VERSION=0.93.9
 ARG TFDOCS_VERSION=0.20.0
 ARG TFLINT_VERSION=0.60.0
-ARG TFSEC_VERSION=1.28.14
 ARG TRIVY_VERSION=0.67.2
 ARG EKSCTL_VERSION=0.217.0
 
@@ -45,11 +44,6 @@ RUN ARCH=$(cat /tmp/arch) && \
     wget -q https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${ARCH}.zip && \
     unzip -q tflint_linux_${ARCH}.zip -d /tmp/bin/ && \
     rm tflint_linux_${ARCH}.zip
-
-# Download TFsec
-RUN ARCH=$(cat /tmp/arch) && \
-    wget -q https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-${ARCH} -O /tmp/bin/tfsec && \
-    chmod +x /tmp/bin/tfsec
 
 # Download Trivy
 RUN case $(uname -m) in \
@@ -134,7 +128,6 @@ RUN terraform --version && \
     checkov --version && \
     terraform-docs --version && \
     tflint --version && \
-    tfsec --version && \
     trivy --version && \
     pre-commit --version && \
     aws --version && \

@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This repository builds a Docker image (`duyluann/terraform-toolkit`) that bundles Terraform infrastructure tools into a single container. The image includes Terraform, Terragrunt, Checkov, TFSec, TFLint, terraform-docs, Trivy, AWS CLI, eksctl, and pre-commit.
+This repository builds a Docker image (`duyluann/terraform-toolkit`) that bundles Terraform infrastructure tools into a single container. The image includes Terraform, Terragrunt, Checkov, TFLint, terraform-docs, Trivy, AWS CLI, eksctl, and pre-commit.
+
+**Note**: TFSec has been removed as it's deprecated. Trivy now provides Terraform security scanning functionality (use `trivy config` for Terraform scanning).
 
 ## Architecture
 
@@ -143,13 +145,12 @@ The Dockerfile uses a multi-stage build to minimize image size while maintaining
 |-----------|------|-------|
 | Checkov (Python) | ~236 MB | Infrastructure security scanning |
 | AWS CLI | ~231 MB | AWS command line interface |
-| Trivy | ~148 MB | Container security scanner |
+| Trivy | ~148 MB | Container and Terraform security scanner |
 | eksctl | ~136 MB | Kubernetes cluster management |
 | System packages | ~100 MB | Minimal: git, Python, bash, curl, unzip |
 | Terraform | 87 MB | Core tool |
 | Terragrunt | 67 MB | Terraform wrapper |
 | TFLint | 47 MB | Terraform linter |
-| TFSec | 46 MB | Terraform security scanner |
 | terraform-docs | 16 MB | Documentation generator |
 
 ### Build Process

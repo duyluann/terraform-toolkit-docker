@@ -45,7 +45,6 @@ jobs:
           export TERRAGRUNT_VERSION=$(grep '^ARG TERRAGRUNT_VERSION=' Dockerfile | cut -d '=' -f2)
           export CHECKOV_VERSION=$(grep '^ARG CHECKOV_VERSION=' Dockerfile | cut -d '=' -f2)
           export TFLINT_VERSION=$(grep '^ARG TFLINT_VERSION=' Dockerfile | cut -d '=' -f2)
-          export TFSEC_VERSION=$(grep '^ARG TFSEC_VERSION=' Dockerfile | cut -d '=' -f2)
           export TRIVY_VERSION=$(grep '^ARG TRIVY_VERSION=' Dockerfile | cut -d '=' -f2)
           export TFDOCS_VERSION=$(grep '^ARG TFDOCS_VERSION=' Dockerfile | cut -d '=' -f2)
           export EKSCTL_VERSION=$(grep '^ARG EKSCTL_VERSION=' Dockerfile | cut -d '=' -f2)
@@ -71,7 +70,6 @@ jobs:
           | Terragrunt | ${TERRAGRUNT_VERSION} |
           | Checkov | ${CHECKOV_VERSION} |
           | TFLint | ${TFLINT_VERSION} |
-          | TFSec | ${TFSEC_VERSION} |
           | Trivy | ${TRIVY_VERSION} |
           | terraform-docs | ${TFDOCS_VERSION} |
           | eksctl | ${EKSCTL_VERSION} |

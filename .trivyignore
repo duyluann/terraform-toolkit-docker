@@ -2,13 +2,12 @@
 # This file contains CVEs that are acknowledged but cannot be immediately fixed
 # These are typically in embedded Go stdlib within pre-compiled binaries
 
-# Go stdlib vulnerabilities in Terraform, Terragrunt, TFLint, TFSec, Trivy, eksctl
+# Go stdlib vulnerabilities in Terraform, Terragrunt, TFLint, Trivy, eksctl
 # These require upstream projects to rebuild with newer Go versions
 # Tracking issues:
 # - Terraform: https://github.com/hashicorp/terraform/releases
 # - Terragrunt: https://github.com/gruntwork-io/terragrunt/releases
 # - TFLint: https://github.com/terraform-linters/tflint/releases
-# - TFSec: https://github.com/aquasecurity/tfsec/releases
 # - Trivy: https://github.com/aquasecurity/trivy/releases
 # - eksctl: https://github.com/eksctl-io/eksctl/releases
 
