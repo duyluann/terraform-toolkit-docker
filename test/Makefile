@@ -36,9 +36,6 @@ test-versions: ## Test all tool versions
 	@echo "TFLint:"
 	@$(DOCKER_RUN) tflint --version
 	@echo ""
-	@echo "TFSec:"
-	@$(DOCKER_RUN) tfsec --version
-	@echo ""
 	@echo "Trivy:"
 	@$(DOCKER_RUN) trivy --version
 	@echo ""
@@ -92,9 +89,9 @@ lint: ## Run TFLint
 	@echo "Running TFLint..."
 	@$(DOCKER_RUN) tflint
 
-security: ## Run security scans (TFSec and Checkov)
-	@echo "Running TFSec..."
-	@$(DOCKER_RUN) tfsec . --no-color || true
+security: ## Run security scans (Trivy and Checkov)
+	@echo "Running Trivy config scan..."
+	@$(DOCKER_RUN) trivy config . || true
 	@echo ""
 	@echo "Running Checkov..."
 	@$(DOCKER_RUN) checkov -d . --compact || true

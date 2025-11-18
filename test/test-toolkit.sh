@@ -42,10 +42,6 @@ echo "TFLint version:"
 run_in_docker tflint --version
 echo ""
 
-echo "TFSec version:"
-run_in_docker tfsec --version
-echo ""
-
 echo "Trivy version:"
 run_in_docker trivy --version
 echo ""
@@ -110,20 +106,8 @@ else
 fi
 echo ""
 
-# Test 5: TFSec
-echo "=== Test 5: TFSec security scan ==="
-echo ""
-
-echo "Running TFSec..."
-if run_in_docker tfsec . --no-color; then
-  echo "✓ TFSec passed"
-else
-  echo "⚠ TFSec found security issues"
-fi
-echo ""
-
-# Test 6: Checkov
-echo "=== Test 6: Checkov security scan ==="
+# Test 5: Checkov
+echo "=== Test 5: Checkov security scan ==="
 echo ""
 
 echo "Running Checkov..."
@@ -134,8 +118,8 @@ else
 fi
 echo ""
 
-# Test 7: terraform-docs
-echo "=== Test 7: terraform-docs ==="
+# Test 6: terraform-docs
+echo "=== Test 6: terraform-docs ==="
 echo ""
 
 echo "Generating documentation..."
@@ -150,8 +134,8 @@ else
 fi
 echo ""
 
-# Test 8: Terraform plan
-echo "=== Test 8: Terraform plan ==="
+# Test 7: Terraform plan
+echo "=== Test 7: Terraform plan ==="
 echo ""
 
 echo "Running terraform plan..."
@@ -163,8 +147,8 @@ else
 fi
 echo ""
 
-# Test 9: Terraform apply (auto-approve for testing)
-echo "=== Test 9: Terraform apply ==="
+# Test 8: Terraform apply (auto-approve for testing)
+echo "=== Test 8: Terraform apply ==="
 echo ""
 
 read -p "Do you want to run terraform apply? (yes/no): " -r
@@ -178,16 +162,16 @@ if [[ $REPLY =~ ^[Yy]([Ee][Ss])?$ ]]; then
   fi
   echo ""
 
-  # Test 10: Terraform output
-  echo "=== Test 10: Terraform output ==="
+  # Test 9: Terraform output
+  echo "=== Test 9: Terraform output ==="
   echo ""
 
   echo "Terraform outputs:"
   run_in_docker terraform output
   echo ""
 
-  # Test 11: Terraform destroy
-  echo "=== Test 11: Terraform destroy ==="
+  # Test 10: Terraform destroy
+  echo "=== Test 10: Terraform destroy ==="
   echo ""
 
   read -p "Do you want to run terraform destroy? (yes/no): " -r
@@ -205,8 +189,8 @@ else
 fi
 echo ""
 
-# Test 12: Terragrunt (optional)
-echo "=== Test 12: Terragrunt ==="
+# Test 11: Terragrunt (optional)
+echo "=== Test 11: Terragrunt ==="
 echo ""
 
 read -p "Do you want to test Terragrunt? (yes/no): " -r

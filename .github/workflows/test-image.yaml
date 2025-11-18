@@ -97,10 +97,6 @@ jobs:
         run: |
           docker run --rm --platform ${{ matrix.platform }} ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} tflint --version
 
-      - name: Test TFSec Version
-        run: |
-          docker run --rm --platform ${{ matrix.platform }} ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} tfsec --version
-
       - name: Test Trivy Version
         run: |
           docker run --rm --platform ${{ matrix.platform }} ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} trivy --version
@@ -402,16 +398,6 @@ jobs:
         if: steps.image.outputs.load_from_artifact == 'false'
         run: docker pull --platform ${{ matrix.platform }} ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }}
 
-      - name: Run TFSec
-        working-directory: test
-        run: |
-          docker run --rm --platform ${{ matrix.platform }} \
-            --user $(id -u):$(id -g) \
-            -v $(pwd):/workspace \
-            -w /workspace \
-            ${{ env.DOCKER_IMAGE }}:${{ steps.image.outputs.tag }} \
-            tfsec . --format=json | tee tfsec-${{ env.PLATFORM_PAIR }}.json || true
-
       - name: Run Checkov
         working-directory: test
         run: |
@@ -439,7 +425,6 @@ jobs:
         with:
           name: security-scan-results-${{ env.PLATFORM_PAIR }}
           path: |
-            test/tfsec-${{ env.PLATFORM_PAIR }}.json
             test/checkov-${{ env.PLATFORM_PAIR }}.json
             test/trivy-${{ env.PLATFORM_PAIR }}.json
           retention-days: 7
