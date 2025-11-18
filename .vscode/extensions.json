@@ -1,11 +1,9 @@
 {
     "recommendations": [
         "editorconfig.editorconfig",
-        "visualstudioexptteam.vscodeintellicode",
         "esbenp.prettier-vscode",
         "eamodio.gitlens",
         "streetsidesoftware.code-spell-checker",
-        "pkief.material-icon-theme",
         "ms-azuretools.vscode-docker"
     ]
 }
