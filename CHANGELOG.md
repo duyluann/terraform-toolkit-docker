@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.72.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.71.0...v1.72.0) (2025-11-18)
+
+
+### Features
+
+* Remove deprecated TFSec tool ([#195](https://github.com/duyluann/terraform-toolkit-docker/issues/195)) ([0fa3216](https://github.com/duyluann/terraform-toolkit-docker/commit/0fa32165b365d8e1e40169c8038527a8a3a53a8a))
+
 ## [1.71.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.70.0...v1.71.0) (2025-11-18)
 
 
