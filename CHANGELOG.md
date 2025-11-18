@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.71.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.70.0...v1.71.0) (2025-11-18)
+
+
+### Features
+
+* Combine test artifacts into single organized archive ([#194](https://github.com/duyluann/terraform-toolkit-docker/issues/194)) ([33dd8e7](https://github.com/duyluann/terraform-toolkit-docker/commit/33dd8e75550196d3f266dc4cc2c53d8ec43b177a))
+* Update tool versions ([#196](https://github.com/duyluann/terraform-toolkit-docker/issues/196)) ([2dd47e2](https://github.com/duyluann/terraform-toolkit-docker/commit/2dd47e2d43ffbcc5703a0446fab7d6dd59309a2b))
+
 ## [1.70.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.69.1...v1.70.0) (2025-11-17)
 
 
