@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.73.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.72.0...v1.73.0) (2025-11-24)
+
+
+### Features
+
+* Update tool versions ([#199](https://github.com/duyluann/terraform-toolkit-docker/issues/199)) ([e4e4020](https://github.com/duyluann/terraform-toolkit-docker/commit/e4e4020993299c75cd3c794f852d8af93b1b1806))
+
+
+### Maintenance
+
+* **deps:** bump actions/checkout from 5 to 6 ([#198](https://github.com/duyluann/terraform-toolkit-docker/issues/198)) ([e2e4183](https://github.com/duyluann/terraform-toolkit-docker/commit/e2e4183f23a3e3e6744641852d93a781fd8d2f5f))
+* **deps:** bump cycjimmy/semantic-release-action from 5 to 6 ([#197](https://github.com/duyluann/terraform-toolkit-docker/issues/197)) ([a7df78a](https://github.com/duyluann/terraform-toolkit-docker/commit/a7df78acf5b863991b1848a38a3af507853b120c))
+
 ## [1.72.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.71.0...v1.72.0) (2025-11-18)
 
 
