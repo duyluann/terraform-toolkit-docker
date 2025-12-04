@@ -63,7 +63,7 @@ RUN ARCH=$(cat /tmp/arch) && \
     rm eksctl_${PLATFORM}.tar.gz
 
 # Final stage - Ubuntu runtime image for full compatibility
-FROM ubuntu:22.04
+FROM ubuntu:25.10
 
 # Version args for Python packages
 ARG CHECKOV_VERSION=3.2.495
