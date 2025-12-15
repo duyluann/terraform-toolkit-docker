@@ -133,7 +133,7 @@ jobs:
       - name: Create Pull Request
         id: cpr
         if: steps.check_changes.outputs.changes == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 'feat: Update tool versions'
           title: 'feat: Update tool versions'
