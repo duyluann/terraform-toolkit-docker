@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.76.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.75.0...v1.76.0) (2025-12-15)
+
+
+### Features
+
+* Update tool versions ([#206](https://github.com/duyluann/terraform-toolkit-docker/issues/206)) ([619cded](https://github.com/duyluann/terraform-toolkit-docker/commit/619cded5fc1930f985a7f354ba662c94841a49a9))
+
+
+### Maintenance
+
+* **deps:** bump actions/cache from 4 to 5 ([#205](https://github.com/duyluann/terraform-toolkit-docker/issues/205)) ([388c6b1](https://github.com/duyluann/terraform-toolkit-docker/commit/388c6b1fc4d9f072d78848edd72f02b6b9ebaadc))
+* **deps:** bump peter-evans/create-pull-request from 7 to 8 ([#204](https://github.com/duyluann/terraform-toolkit-docker/issues/204)) ([30a221b](https://github.com/duyluann/terraform-toolkit-docker/commit/30a221b0b4ca6dc2a8ccffde4f81922b728734be))
+
 ## [1.75.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.74.0...v1.75.0) (2025-12-08)
 
 
