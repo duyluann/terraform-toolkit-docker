@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.77.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.76.0...v1.77.0) (2025-12-22)
+
+
+### Features
+
+* Update tool versions ([#209](https://github.com/duyluann/terraform-toolkit-docker/issues/209)) ([862907f](https://github.com/duyluann/terraform-toolkit-docker/commit/862907f4f55d032bcdd8c84ca45713ff84e4b183))
+
+
+### Maintenance
+
+* **deps:** bump actions/download-artifact from 6 to 7 ([#207](https://github.com/duyluann/terraform-toolkit-docker/issues/207)) ([4c739a7](https://github.com/duyluann/terraform-toolkit-docker/commit/4c739a7e342e742e96d6fb2073ffc15b5f30929b))
+
 ## [1.76.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.75.0...v1.76.0) (2025-12-15)
 
 
