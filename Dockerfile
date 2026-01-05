@@ -66,7 +66,7 @@ RUN ARCH=$(cat /tmp/arch) && \
 FROM ubuntu:22.04
 
 # Version args for Python packages
-ARG CHECKOV_VERSION=3.2.496
+ARG CHECKOV_VERSION=3.2.497
 ARG PRE_COMMIT_VERSION=4.5.1
 
 # Add a non-root user
