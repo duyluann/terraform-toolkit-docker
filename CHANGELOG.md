@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.80.1](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.80.0...v1.80.1) (2026-01-17)
+
+
+### Bug Fixes
+
+* Handle skipped status for PR-conditional jobs in CI Summary ([#214](https://github.com/duyluann/terraform-toolkit-docker/issues/214)) ([ff2cd30](https://github.com/duyluann/terraform-toolkit-docker/commit/ff2cd3026fc0c008652fc29c7ec926228e845358))
+
 ## [1.80.0](https://github.com/duyluann/terraform-toolkit-docker/compare/v1.79.0...v1.80.0) (2026-01-12)
 
 
