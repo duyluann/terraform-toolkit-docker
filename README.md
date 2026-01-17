@@ -1,7 +1,7 @@
-# 🛠️ Terraform Toolkit Docker Image
-
 > [!IMPORTANT]
 > This repository has been migrated to [ops4life/terraform-toolkit-docker](https://github.com/ops4life/terraform-toolkit-docker). This repo is now archived and no longer maintained. Please use the new repository for the latest updates.
+
+# 🛠️ Terraform Toolkit Docker Image
 
 [![CI](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/ci.yaml)
 [![Build](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml/badge.svg?branch=main)](https://github.com/duyluann/terraform-toolkit-docker/actions/workflows/build-tf-toolkit-image.yaml)
